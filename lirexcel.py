@@ -2,8 +2,9 @@ import pandas as pd
 from individu import Individu
 
 
-def lirexcel(scenario, chemin='DataSeating.xlsx', n=9):
+def lirexcel(scenario, chemin='DataSeating.xlsx'):
     df = pd.read_excel(chemin, sheet_name=scenario)
+    df = df.drop(df.tail(2).index)
     df = df.fillna(0)
     df['Femmes'] = df['Femmes'].apply(lambda x: int(x))
     df['Hommes'] = df['Hommes'].apply(lambda x: int(x))
@@ -49,21 +50,9 @@ def lirexcel(scenario, chemin='DataSeating.xlsx', n=9):
 
     return l
 
+
 if __name__ == '__main__':
     l = lirexcel(0)
 
-    print('# 23')
-    for x in l[23].group:
-        print(x.id)
-
-    print('# 24')
-    for x in l[24].group:
-        print(x.id)
-
-    print('# 25')
-    for x in l[25].group:
-        print(x.id)
-
-    print('# 26')
-    for x in l[26].group:
-        print(x.id)
+    for i in l:
+        print(i.id, i.categorie, len(i.groupe), i.transit)
