@@ -1,4 +1,4 @@
-def barycentre(m, X, ind, N, P, K):
+def barycentre(m, ind, N, P, K):
     max_bar_j = 5
     max_bar_i = 5
     min_bar_j = 3
@@ -6,6 +6,8 @@ def barycentre(m, X, ind, N, P, K):
 
     bar = [0, 0]
     mtot = 0
+
+    X = m.getVars()[0]
 
     for k in range(K):
         i0 = 0
@@ -31,8 +33,9 @@ def barycentre(m, X, ind, N, P, K):
     return C1, C2, C3, C4
 
 
-def unicite(m, X, N, P, K):
+def unicite(m, N, P, K):
     contraintes = []
+    X = m.getVars()[0]
     for k in range(K):
         s = 0
         for i in range(N):
