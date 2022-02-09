@@ -1,13 +1,13 @@
 from initialisation import initialise
-from gurobipy import * 
+from gurobipy import *
 import numpy as np
-from contraintes import barycentre,unicite
+from contraintes import barycentre, unicite
 from lirexcel import lirexcel
 
 
-N=30
-P=6
-scenario=0
+N = 30
+P = 6
+scenario = 0
 
 
 if __name__ == '__main__':
@@ -15,5 +15,7 @@ if __name__ == '__main__':
     ind=lirexcel(scenario)
     K=len(ind)
     X=initialise(m,N,P,K)
-    barycentre(m,ind,N,P,K)
-    unicite(m,N,P,K)
+    m.update()
+    barycentre(m,X,ind,N,P,K)
+    unicite(m,X,N,P,K)
+
