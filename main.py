@@ -18,3 +18,4 @@ if __name__ == '__main__':
     m.update()
     barycentre(m,X,ind,N,P,K)
     unicite(m,X,N,P,K)
+
