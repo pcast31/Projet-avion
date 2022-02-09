@@ -1,4 +1,4 @@
-dic_masse={'M':85,'F':70,'E':35}
+dic_masse={'H':85,'F':70,'E':35}
 
 class Individu:
 
