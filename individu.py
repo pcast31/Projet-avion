@@ -4,13 +4,13 @@ class Individu:
 
     def __init__(self,i,cat,t):
         self.id=i
-        self.group=[]
         self.categorie=cat
+        self.groupe=[]
         self.masse=dic_masse[cat]
         self.transit=t
 
     def ajout_au_groupe(self,ind):
-        self.group.append(ind)
+        self.groupe.append(ind)
 
 
 
