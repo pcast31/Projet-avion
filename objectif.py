@@ -18,4 +18,4 @@ def bonus_groupe(model, X, ind):
     return group
 
 def fct_objectif(model, X, ind):
-    model.addConstr(correspondance(model, X, ind) + bonus_groupe(model, X, ind))
+    model.setObjective(correspondance(model, X, ind) + bonus_groupe(model, X, ind), GRB.MAXIMIZE)
