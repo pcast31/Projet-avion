@@ -80,7 +80,7 @@ def chef_de_groupe(model, X, ind):
         for l in lien[k]:
             if l in vus:
                 b = False
-        if b and len(lien[k]) == 1:
+        if b:# and len(lien[k]) == 1:
             vus.append(k)
             for l in lien[k]:
                 model.addConstr(sum([i*X[i,j,k] for i in range(N) for j in range(P)]) <= sum([i*X[i,j,l] for i in range(N) for j in range(P)]))
