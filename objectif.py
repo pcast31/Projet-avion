@@ -71,4 +71,4 @@ def bonus_groupe2(model, X, ind):
     return group 
 
 def fct_objectif(model, X, ind):
-    model.setObjective(bonus_groupe2(model, X, ind)  , GRB.MINIMIZE) #- correspondance(model, X, ind)
+    model.setObjective(bonus_groupe2(model, X, ind) - correspondance(model, X, ind) , GRB.MINIMIZE) #
