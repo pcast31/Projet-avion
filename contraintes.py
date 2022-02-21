@@ -1,3 +1,5 @@
+import numpy as np
+
 def barycentre(m, X, ind, N, P, K):
     max_bar_j = 4
     max_bar_i = 17
@@ -64,3 +66,22 @@ def symetrie(m,X,ind,N,P,K):
             place_min[ind[k].categorie]=k
         elif ind[k].groupe==[] and ind[k].transit>90:
             place_min[ind[k].categorie]=k
+
+def chef_de_groupe(model, X, ind):
+    (N,P,K) = np.shape(X)
+    lien = [[] for _ in range(K)]
+    for k in range(K):
+        for l in range(K):
+            if ind[l] in ind[k].groupe:    
+                lien[k].append(l) 
+    vus = []
+    for k in range(K):
+        b = True
+        for l in lien[k]:
+            if l in vus:
+                b = False
+        if b and len(lien[k]) == 1:
+            vus.append(k)
+            for l in lien[k]:
+                model.addConstr(sum([i*X[i,j,k] for i in range(N) for j in range(P)]) <= sum([i*X[i,j,l] for i in range(N) for j in range(P)]))
+                #model.addConstr(sum([j*X[i,j,k] for j in range(P) for i in range(N)]) <= sum([j*X[i,j,l] for j in range(P) for i in range(N)]))

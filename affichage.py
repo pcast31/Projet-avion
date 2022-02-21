@@ -18,29 +18,20 @@ def affiche_avion(tab,ind,m):
     (N,P,K) = np.shape(tab)
     avion = -1*np.ones((N,P))
     g = 1
-    places = []
     lien = [[] for _ in range(K)]
     for k in range(K):
         for l in range(K):
             if ind[l] in ind[k].groupe:    
                 lien[k].append(l) 
-    for i in range(N):
-        for j in range(P):
-            for k in range(K):
-                if tab[i,j,k] == 1:
-                    b = True
+    for k in range(K):
+        for i in range(N):
+            for j in range(P):
+                if tab[i,j,k] == 1:    
                     if len(lien[k]) == 0:
                         avion[i,j] = 0
-                    else:
-                        for l in lien[k]:
-                            if l in places:
-                                b = False
-                        if b:
+                    else :
+                        avion[i,j] = g
+                        if k+1 not in lien[k]:
                             g += 1
-                            avion[i,j] = g
-                            places.append(k)
-                        else:
-                            avion[i,j] = g
-                            places.append(k)
     print(avion)
                        
