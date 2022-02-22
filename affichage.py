@@ -1,8 +1,6 @@
-   
-   
-   
-   
-def affiche_texte(tab,ind):
+import numpy as np
+     
+def affiche_texte(tab,ind,m):
     bar_x=0
     bar_y=0
     K=len(tab[0][0])
@@ -14,3 +12,35 @@ def affiche_texte(tab,ind):
                     bar_y+=j
                     print("L'individu ",k,"en groupe avec",[indiv.id for indiv in ind[k].groupe],"est à la place",i,j)
     print("barycentre en ligne:" ,bar_x/K,"barycentre en rangée:",bar_y/K)
+    print("score :",m.objVal)
+
+def affiche_avion(tab,ind,m):
+    (N,P,K) = np.shape(tab)
+    avion = -1*np.ones((N,P))
+    g = 1
+    places = []
+    lien = [[] for _ in range(K)]
+    for k in range(K):
+        for l in range(K):
+            if ind[l] in ind[k].groupe:    
+                lien[k].append(l) 
+    for i in range(N):
+        for j in range(P):
+            for k in range(K):
+                if tab[i,j,k] == 1:
+                    b = True
+                    if len(lien[k]) == 0:
+                        avion[i,j] = 0
+                    else:
+                        for l in lien[k]:
+                            if l in places:
+                                b = False
+                        if b:
+                            g += 1
+                            avion[i,j] = g
+                            places.append(k)
+                        else:
+                            avion[i,j] = g
+                            places.append(k)
+    print(avion)
+                       

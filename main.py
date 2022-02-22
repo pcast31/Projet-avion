@@ -4,7 +4,7 @@ import numpy as np
 from contraintes import barycentre, unicite_personne,unicite_siege,symetrie
 from objectif import *
 from lirexcel import lirexcel
-from affichage import affiche_texte
+from affichage import affiche_texte, affiche_avion
 
 
 N = 30
@@ -25,4 +25,5 @@ if __name__ == '__main__':
     fct_objectif(m, X, ind)
     m.update()
     m.optimize()
-    affiche_texte(X.x,ind)
+    affiche_texte(X.x,ind,m)
+    affiche_avion(X.x,ind,m)

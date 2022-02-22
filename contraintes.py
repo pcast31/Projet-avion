@@ -1,3 +1,5 @@
+import numpy as np
+
 def barycentre(m, X, ind, N, P, K):
     max_bar_j = 4
     max_bar_i = 17
@@ -64,3 +66,5 @@ def symetrie(m,X,ind,N,P,K):
             place_min[ind[k].categorie]=k
         elif ind[k].groupe==[] and ind[k].transit>90:
             place_min[ind[k].categorie]=k
+
+
