@@ -1,5 +1,6 @@
 # Projet-avion
-par Tom De Coninck, Paul Castéras, Thibault Pellerin, Alexis Robardet et Pierre Eberschweiler
+Projet de placement de passagers dans un avion par Paul Castéras, Tom De Coninck, Pierre Eberschweiler, Thibault Pellerin et Alexis Robardet
+Par CentraleSupélec en partenariat avec Air France KLM
 
 - affichage.py : affichage des résultats dans la console
 - contraintes.py : contraintes du modèle
