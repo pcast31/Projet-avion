@@ -115,6 +115,7 @@ def new_aff(tab, ind, m):
     # Passagers
     x_barycentre = 0
     y_barycentre = 0
+    poids_total = 0
     transits = []
     K = len(ind)
     for k in range(K):
@@ -123,13 +124,14 @@ def new_aff(tab, ind, m):
                 if tab[i, j, k] == 1:
                     x = 10 + i * (30 + 10) + 15
                     y = 10 + (j + j // 3) * (30 + 10) + 15
-                    x_barycentre += x
-                    y_barycentre += y
+                    x_barycentre += x * ind[k].masse
+                    y_barycentre += y * ind[k].masse
+                    poids_total += ind[k].masse
                     textes[i][j] = canvas.create_text(x, y, text=str(ind[k].idgroupe), fill='#FFFFFF')
                     if ind[k].transit > 0 and ind[k].transit not in transits:
                         transits.append(ind[k].transit)
-    x_barycentre = x_barycentre / K
-    y_barycentre = y_barycentre / K
+    x_barycentre = x_barycentre / poids_total
+    y_barycentre = y_barycentre / poids_total
     transits.sort()
 
 
