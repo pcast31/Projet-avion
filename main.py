@@ -15,10 +15,11 @@ scenario = 0
 if __name__ == '__main__':
     m=Model()
     ind=lirexcel(scenario)
+    #ind = ind[:len(ind)//2]
     K=len(ind)
     X=initialise(m,N,P,K)
     m.update()
-    barycentre(m,X,ind,N,P,K)
+    #barycentre(m,X,ind,N,P,K)
     unicite_personne(m,X,N,P,K)
     unicite_siege(m,X,N,P,K)
     chef_de_groupe(m, X, ind)

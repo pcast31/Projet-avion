@@ -67,8 +67,19 @@ def bonus_groupe2(model, X, ind):
     for k in range(K):
         if len(lien[k]) > 0 and lien[k][0] < k:    
             group = group + sum([sum([i*X[i,j,k] for i in range(N)]) - sum([i*X[i,j,lien[k][0]] for i in range(N)]) for j in range(P)])
-            #group = group + sum([sum([j*X[i,j,k] for j in range(P)]) - sum([j*X[i,j,lien[k][0]] for j in range(P)]) for i in range(N)])
+            #group = group + 0.2*sum([sum([j*X[i,j,k] for j in range(P)]) - sum([j*X[i,j,lien[k][0]] for j in range(P)]) for i in range(N)])
     return group 
 
+def bonus_seul(model, X, ind):
+    (N,P,K) = np.shape(X)
+    lien = [[] for _ in range(K)]
+    for k in range(K):
+        for l in range(K):
+            if ind[l] in ind[k].groupe:    
+                lien[k].append(l) 
+    bordure = sum([X[i,j,k] for k in range(K) for i in range(N) for j in [0,5] if len(lien[k]) == 0])
+    milieu = sum([X[i,j,k] for k in range(K) for i in range(N) for j in [2,3] if len(lien[k]) > 0])
+    return bordure + milieu
+
 def fct_objectif(model, X, ind):
-    model.setObjective(bonus_groupe2(model, X, ind) - correspondance(model, X, ind) , GRB.MINIMIZE) #
+    model.setObjective(bonus_groupe2(model, X, ind) - correspondance(model, X, ind) - bonus_seul(model, X, ind), GRB.MINIMIZE) #
