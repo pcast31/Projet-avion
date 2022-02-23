@@ -118,6 +118,7 @@ def new_aff(tab, ind, m):
     # Passagers
     x_barycentre = 0
     y_barycentre = 0
+    transits = []
     K = len(ind)
     for k in range(K):
         for i in range(len(tab)):
@@ -128,8 +129,11 @@ def new_aff(tab, ind, m):
                     x_barycentre += x
                     y_barycentre += y
                     textes[i][j] = canvas.create_text(x, y, text=str(ind[k].idgroupe), fill='#FFFFFF')
+                    if ind[k].transit > 0 and ind[k].transit not in transits:
+                        transits.append(ind[k].transit)
     x_barycentre = x_barycentre / K
     y_barycentre = y_barycentre / K
+    transits.sort()
 
 
     # Barycentre
@@ -201,7 +205,20 @@ def new_aff(tab, ind, m):
     def transit_command():
         global etat_couleurs
 
-        pass
+        for k in range(K):
+            for i in range(len(tab)):
+                for j in range(len(tab[0])):
+                    if tab[i, j, k] == 1:
+                        if etat_couleurs == 'transit':
+                            canvas.itemconfig(places[i][j], fill=couleurs[i][j])
+                        elif ind[k].transit == 0 or ind[k].transit > 90:
+                            canvas.itemconfig(places[i][j], fill='#000000')
+                        else :
+                            canvas.itemconfig(places[i][j], fill='#00A000')
+        if etat_couleurs == 'transit':
+            etat_couleurs = 'base'
+        else:
+            etat_couleurs = 'transit'
 
     transit_bouton = tk.Button(root, text='Transit', command=transit_command)
     transit_bouton.pack()
