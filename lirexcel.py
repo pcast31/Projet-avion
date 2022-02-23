@@ -6,6 +6,7 @@ def lirexcel(scenario, chemin='DataSeating.xlsx'):
     df = pd.read_excel(chemin, sheet_name=scenario)
     df = df.drop(df.tail(2).index)
     df = df.fillna(0)
+    df['Numéro du groupe'] = df['Numéro du groupe'].apply(lambda x: int(x))
     df['Femmes'] = df['Femmes'].apply(lambda x: int(x))
     df['Hommes'] = df['Hommes'].apply(lambda x: int(x))
     df['Enfants'] = df['Enfants'].apply(lambda x: int(x))
@@ -19,27 +20,27 @@ def lirexcel(scenario, chemin='DataSeating.xlsx'):
         groupe = []
 
         for k in range(row['Femmes']):
-            l.append(Individu(id, 'F', row['TransitTime']))
+            l.append(Individu(id, 'F', row['TransitTime'], row['Numéro du groupe']))
             groupe.append(l[-1])
             id += 1
 
         for k in range(row['Hommes']):
-            l.append(Individu(id, 'H', row['TransitTime']))
+            l.append(Individu(id, 'H', row['TransitTime'], row['Numéro du groupe']))
             groupe.append(l[-1])
             id += 1
 
         for k in range(row['Enfants']):
-            l.append(Individu(id, 'E', row['TransitTime']))
+            l.append(Individu(id, 'E', row['TransitTime'], row['Numéro du groupe']))
             groupe.append(l[-1])
             id += 1
 
         for k in range(row['WCHR']):
-            l.append(Individu(id, 'H', row['TransitTime']))
+            l.append(Individu(id, 'H', row['TransitTime'], row['Numéro du groupe']))
             groupe.append(l[-1])
             id += 1
 
         for k in range(row['WCHB']):
-            l.append(Individu(id, 'H', row['TransitTime']))
+            l.append(Individu(id, 'H', row['TransitTime'], row['Numéro du groupe']))
             groupe.append(l[-1])
             id += 1
 
