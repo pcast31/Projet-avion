@@ -6,7 +6,7 @@ def correspondance(model, X, ind):
     (N,P,K) = np.shape(X)
     lst = []
     for k in range(K):
-        if ind[k].transit <= 90:
+        if 0 < ind[k].transit <= 90:
             lst.append(k)
     corres = sum([X[i,j,k] for j in range(P) for i in range(int(N/3)) for k in lst])
     return corres
@@ -64,9 +64,11 @@ def bonus_groupe2(model, X, ind):
         for l in range(K):
             if ind[l] in ind[k].groupe:    
                 lien[k].append(l) 
-    group = sum([X[i+1,j,k]*X[i,j,l] for i in range(N-1) for j in range(P)  for k in range(K) for l in lien[k]])
-
-
+    group = 0
+    for k in range(K):
+        if len(lien[k]) > 0 and lien[k][0] < k:    
+            group = group + 2*sum([sum([i*X[i,j,k] for i in range(N)]) - sum([i*X[i,j,lien[k][0]] for i in range(N)]) for j in range(P)])
+            #group = group + sum([sum([j*X[i,j,k] for j in range(P)]) - sum([j*X[i,j,lien[k][0]] for j in range(P)]) for i in range(N)])
     return group 
 
 
@@ -103,21 +105,21 @@ def bonus_groupe3(model, X, ind):
                         l1=groupe[id]
                         l2=groupe[id+1]
 
-                        model.addConstr(10*dic_y[l1]+dic_x[l1]>=10*dic_y[l2]+dic_x[l2])
+                        #model.addConstr(10*dic_y[l1]+dic_x[l1]>=10*dic_y[l2]+dic_x[l2])
                         dic_absx[(k,l1,l2)]=model.addVar(vtype=GRB.INTEGER,name="absx"+str(l1)+','+str(l2))
                         model.addConstr(dic_absx[(k,l1,l2)]>=dic_x[l1]-dic_x[l2])
                         model.addConstr(dic_absx[(k,l1,l2)]>=-dic_x[l1]+dic_x[l2])
                         group+= dic_absx[(k,l1,l2)]#dic_x[groupe[id]]-dic_x[groupe[id+1]]
 
                         #model.addConstr(dic_y[groupe[id]]>=dic_y[groupe[id+1]])
-                        dic_absy[(k,l1,l2)]=model.addVar(vtype=GRB.INTEGER,name="absy"+str(l1)+','+str(l2))
-                        model.addConstr(dic_absy[(k,l1,l2)]>=dic_y[l1]-dic_y[l2])
-                        model.addConstr(dic_absy[(k,l1,l2)]>=-dic_y[l1]+dic_y[l2])
-                        group+= 2*dic_absy[(k,l1,l2)]#(dic_y[groupe[id]]-dic_y[groupe[id+1]])                    
+                        #dic_absy[(k,l1,l2)]=model.addVar(vtype=GRB.INTEGER,name="absy"+str(l1)+','+str(l2))
+                        #model.addConstr(dic_absy[(k,l1,l2)]>=dic_y[l1]-dic_y[l2])
+                        #model.addConstr(dic_absy[(k,l1,l2)]>=-dic_y[l1]+dic_y[l2])
+                        #group+= 2*dic_absy[(k,l1,l2)]#(dic_y[groupe[id]]-dic_y[groupe[id+1]])                    
        
     return group 
 
 
 
 def fct_objectif(model, X, ind):
-    model.setObjective(bonus_groupe3(model, X, ind)-correspondance(model, X, ind), GRB.MINIMIZE) 
+    model.setObjective(bonus_groupe3(model, X, ind)- correspondance(model, X, ind) , GRB.MINIMIZE) #
