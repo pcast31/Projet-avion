@@ -99,9 +99,6 @@ def new_aff(tab, ind, m):
 
     for i in range(28):
         for j in range(6):
-            if i == 0 and j // 3 == 0:
-                continue
-
             if i == 11:
                 couleurs[i][j] = '#E63232'
             
