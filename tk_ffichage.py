@@ -76,7 +76,7 @@ def aff(tab, l, m):
 
 etat_couleurs = 'base'
 
-def new_aff(tab, ind, m):
+def new_aff(N, P, tab, ind, m):
     global etat_couleurs
 
     print('Début affichage')
@@ -86,19 +86,19 @@ def new_aff(tab, ind, m):
     root.title('Navion')
 
     # Canvas
-    canvas = tk.Canvas(root, width=1130, height=290)
+    canvas = tk.Canvas(root, width=N * 30 + (N + 1) * 10, height=290)
     canvas.pack()
 
     # Sol
-    canvas.create_rectangle(0, 0, 1130, 290, fill='#3C3C4B', width=0)
+    canvas.create_rectangle(0, 0, N * 30 + (N + 1) * 10, 290, fill='#3C3C4B', width=0)
 
     # Places
-    places = [[None for j in range(6)] for i in range(28)]
-    textes = [[None for j in range(6)] for i in range(28)]
-    couleurs = [[None for j in range(6)] for i in range(28)]
+    places = [[None for j in range(P)] for i in range(N)]
+    textes = [[None for j in range(P)] for i in range(N)]
+    couleurs = [[None for j in range(P)] for i in range(N)]
 
-    for i in range(28):
-        for j in range(6):
+    for i in range(N):
+        for j in range(P):
             if i == 11:
                 couleurs[i][j] = '#E63232'
             
