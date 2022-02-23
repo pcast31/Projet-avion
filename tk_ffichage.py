@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 from lirexcel import lirexcel
+from random import random
 
 
 def nombre2hexa(n):
@@ -117,6 +118,7 @@ def new_aff(N, P, tab, ind, m):
     y_barycentre = 0
     poids_total = 0
     transits = []
+    groupe_max = ind[-1].idgroupe
     K = len(ind)
     for k in range(K):
         for i in range(len(tab)):
@@ -221,6 +223,24 @@ def new_aff(N, P, tab, ind, m):
 
     transit_bouton = tk.Button(root, text='Transit', command=transit_command)
     transit_bouton.pack()
+
+    # Groupes
+    def groupes_command():
+        global etat_couleurs
+        etat_couleurs = 'groupes'
+
+        for k in range(K):
+            for i in range(len(tab)):
+                for j in range(len(tab[0])):
+                    if tab[i, j, k] == 1:
+                        if ind[k].idgroupe == int(groupes_spinbox.get()):
+                            canvas.itemconfig(places[i][j], fill='#00A000')
+                        else:
+                            canvas.itemconfig(places[i][j], fill='#000000')
+
+
+    groupes_spinbox = tk.Spinbox(root, from_=1, to=groupe_max, command=groupes_command)
+    groupes_spinbox.pack()
 
     # Main loop
     root.mainloop()
