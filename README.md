@@ -1,5 +1,5 @@
 # Projet-avion
-Projet de placement de passagers dans un avion par Paul Castéras, Tom De Coninck, Pierre Eberschweiler, Thibault Pellerin et Alexis Robardet
+Projet de placement de passagers dans un avion par Paul Castéras, Tom De Coninck, Pierre Eberschweiler, Thibaut Pellerin et Alexis Robardet
 
 Par CentraleSupélec en partenariat avec Air France KLM
 
