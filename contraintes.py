@@ -2,9 +2,9 @@ import numpy as np
 
 def barycentre(m, X, ind, N, P, K):
     max_bar_j = 2
-    max_bar_i = 18
-    min_bar_j = 1
-    min_bar_i = 12
+    max_bar_i = 17
+    min_bar_j = 4
+    min_bar_i = 13
 
     bar = [0, 0]
     mtot = 0
@@ -15,7 +15,10 @@ def barycentre(m, X, ind, N, P, K):
         for i in range(N):
             for j in range(P):
                 i0 += i*X[i, j, k]
-                j0 += j*X[i, j, k]
+                if j <= 2:
+                    j0 += j*X[i, j, k]
+                else: 
+                    j0 += (j+1)*X[i, j, k] #on compte la largeur du couloir
 
         bar[0] += ind[k].masse*i0
         bar[1] += ind[k].masse*j0
@@ -80,7 +83,7 @@ def chef_de_groupe(model, X, ind):
         for l in lien[k]:
             if l in vus:
                 b = False
-        if b:# and len(lien[k]) == 1:
+        if b:
             vus.append(k)
             for l in lien[k]:
                 model.addConstr(sum([i*X[i,j,k] for i in range(N) for j in range(P)]) <= sum([i*X[i,j,l] for i in range(N) for j in range(P)]))

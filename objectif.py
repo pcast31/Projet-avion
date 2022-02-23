@@ -67,59 +67,46 @@ def bonus_groupe2(model, X, ind):
     group = 0
     for k in range(K):
         if len(lien[k]) > 0 and lien[k][0] < k:    
-            group = group + 2*sum([sum([i*X[i,j,k] for i in range(N)]) - sum([i*X[i,j,lien[k][0]] for i in range(N)]) for j in range(P)])
-            #group = group + sum([sum([j*X[i,j,k] for j in range(P)]) - sum([j*X[i,j,lien[k][0]] for j in range(P)]) for i in range(N)])
+            group = group + sum([sum([i*X[i,j,k] for i in range(N)]) - sum([i*X[i,j,lien[k][0]] for i in range(N)]) for j in range(P)])
+            #group = group + 0.2*sum([sum([j*X[i,j,k] for j in range(P)]) - sum([j*X[i,j,lien[k][0]] for j in range(P)]) for i in range(N)])
     return group 
 
-
-def bonus_groupe3(model, X, ind):
-
+def bonus_seul(model, X, ind):
     (N,P,K) = np.shape(X)
     lien = [[] for _ in range(K)]
     for k in range(K):
         for l in range(K):
             if ind[l] in ind[k].groupe:    
-                lien[k].append(l)
+                lien[k].append(l) 
+    bordure = sum([X[i,j,k] for k in range(K) for i in range(N) for j in [0,5] if len(lien[k]) == 0])
+    milieu = sum([X[i,j,k] for k in range(K) for i in range(N) for j in range(1,5) if len(lien[k]) >= 3])
+    return milieu
 
+def bonus_par_groupe(model,X,ind):
+    (N,P,K) = np.shape(X)
+    bonus=0
     traite=[]
-    dic_x={}
-    dic_y={}
-
-    dic_absx={}
-    dic_absy={}
-    group=0
+    cote=0
     for k in range(K):
-        if k not in traite and lien[k]!=[]:
-            traite.append(k)
-            for l in lien[k]:
-                traite.append(l)
-
-            groupe=[k]+lien[k]
-
-            for l in groupe:
-                dic_x[l]=sum([sum([j*X[i,j,l] for i in range(N)]) for j in range(P)])
-                dic_y[l]=sum([sum([i*X[i,j,l] for i in range(N)]) for j in range(P)])
-            
-        
-            for id in range(len(groupe)-1):
-                        l1=groupe[id]
-                        l2=groupe[id+1]
-
-                        #model.addConstr(10*dic_y[l1]+dic_x[l1]>=10*dic_y[l2]+dic_x[l2])
-                        dic_absx[(k,l1,l2)]=model.addVar(vtype=GRB.INTEGER,name="absx"+str(l1)+','+str(l2))
-                        model.addConstr(dic_absx[(k,l1,l2)]>=dic_x[l1]-dic_x[l2])
-                        model.addConstr(dic_absx[(k,l1,l2)]>=-dic_x[l1]+dic_x[l2])
-                        group+= dic_absx[(k,l1,l2)]#dic_x[groupe[id]]-dic_x[groupe[id+1]]
-
-                        #model.addConstr(dic_y[groupe[id]]>=dic_y[groupe[id+1]])
-                        #dic_absy[(k,l1,l2)]=model.addVar(vtype=GRB.INTEGER,name="absy"+str(l1)+','+str(l2))
-                        #model.addConstr(dic_absy[(k,l1,l2)]>=dic_y[l1]-dic_y[l2])
-                        #model.addConstr(dic_absy[(k,l1,l2)]>=-dic_y[l1]+dic_y[l2])
-                        #group+= 2*dic_absy[(k,l1,l2)]#(dic_y[groupe[id]]-dic_y[groupe[id+1]])                    
-       
-    return group 
-
-
+        if k not in traite:
+            groupe=[ind[k]]+ind[k].groupe
+            if len(groupe)<=3 and len(groupe)>1:
+                for l in groupe:
+                    traite.append(l.id)
+                cote=(cote+1)%2
+                print(cote,[i.id for i in groupe])
+                if len(groupe)==3:
+                    bonus+=sum([sum([sum([X[i,j,l.id] for i in range(N)])for j in range(3*cote,3*cote+3)]) for l in groupe])
+                else:
+                    x=randint(0,1)
+                    bonus+=sum([sum([sum([X[i,j,l.id] for i in range(N)])for j in range(3*cote+x,3*cote+2+x)]) for l in groupe])
+                #for i in range(N):
+                #    for j in range(3*cote,3*cote+3):
+                #        for l in groupe:
+                #            model.addConstr(X[i,j,l.id]==0)
+    return bonus
+    
 
 def fct_objectif(model, X, ind):
-    model.setObjective(bonus_groupe3(model, X, ind)- correspondance(model, X, ind) , GRB.MINIMIZE) #
+    bonus_par_groupe(model,X,ind)
+    model.setObjective(bonus_groupe2(model, X, ind) - correspondance(model, X, ind) - 0.5*bonus_seul(model, X, ind)-10*bonus_par_groupe(model,X,ind), GRB.MINIMIZE) #
