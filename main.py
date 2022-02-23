@@ -5,11 +5,12 @@ from contraintes import barycentre, unicite_personne,unicite_siege,symetrie,chef
 from objectif import *
 from lirexcel import lirexcel
 from affichage import affiche_texte, affiche_avion
+from tk_ffichage import new_aff
 
 
 N = 30
 P = 6
-scenario = 3
+scenario = 2
 
 
 if __name__ == '__main__':
@@ -20,7 +21,7 @@ if __name__ == '__main__':
     print(K)
     X=initialise(m,N,P,K)
     m.update()
-    #barycentre(m,X,ind,N,P,K)
+    barycentre(m,X,ind,N,P,K)
     unicite_personne(m,X,N,P,K)
     unicite_siege(m,X,N,P,K)
     chef_de_groupe(m, X, ind)
@@ -30,3 +31,4 @@ if __name__ == '__main__':
     m.optimize()
     affiche_texte(X.x,ind,m)
     affiche_avion(X.x,ind,m)
+    new_aff(N,P,X.x, ind, m)

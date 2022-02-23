@@ -94,7 +94,6 @@ def bonus_par_groupe(model,X,ind):
                 for l in groupe:
                     traite.append(l.id)
                 cote=(cote+1)%2
-                print(cote,[i.id for i in groupe])
                 if len(groupe)==3:
                     bonus+=sum([sum([sum([X[i,j,l.id] for i in range(N)])for j in range(3*cote,3*cote+3)]) for l in groupe])
                 else:
@@ -109,4 +108,4 @@ def bonus_par_groupe(model,X,ind):
 
 def fct_objectif(model, X, ind):
     bonus_par_groupe(model,X,ind)
-    model.setObjective(bonus_groupe2(model, X, ind) - correspondance(model, X, ind) - 0.5*bonus_seul(model, X, ind)-10*bonus_par_groupe(model,X,ind), GRB.MINIMIZE) #
+    model.setObjective(bonus_groupe2(model, X, ind) - correspondance(model, X, ind) - 0.2*bonus_seul(model, X, ind)-4*bonus_par_groupe(model,X,ind), GRB.MINIMIZE) #

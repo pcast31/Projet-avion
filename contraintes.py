@@ -1,9 +1,9 @@
 import numpy as np
 
 def barycentre(m, X, ind, N, P, K):
-    max_bar_j = 2
+    max_bar_j = 4
     max_bar_i = 17
-    min_bar_j = 4
+    min_bar_j = 2
     min_bar_i = 13
 
     bar = [0, 0]
