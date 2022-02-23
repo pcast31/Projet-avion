@@ -15,7 +15,10 @@ def barycentre(m, X, ind, N, P, K):
         for i in range(N):
             for j in range(P):
                 i0 += i*X[i, j, k]
-                j0 += j*X[i, j, k]
+                if j <= 2:
+                    j0 += j*X[i, j, k]
+                else: 
+                    j0 += (j+1)*X[i, j, k] #on compte la largeur du couloir
 
         bar[0] += ind[k].masse*i0
         bar[1] += ind[k].masse*j0
