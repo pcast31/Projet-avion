@@ -8,7 +8,7 @@ from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
 
 
-N = 28
+N = 30
 P = 6
 scenario = 0
 
