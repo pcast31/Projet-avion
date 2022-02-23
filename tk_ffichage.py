@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 from lirexcel import lirexcel
+from random import random
 
 
 def nombre2hexa(n):
@@ -76,7 +77,7 @@ def aff(tab, l, m):
 
 etat_couleurs = 'base'
 
-def new_aff(tab, ind, m):
+def new_aff(N, P, tab, ind, m):
     global etat_couleurs
 
     print('Début affichage')
@@ -86,19 +87,19 @@ def new_aff(tab, ind, m):
     root.title('Navion')
 
     # Canvas
-    canvas = tk.Canvas(root, width=1130, height=290)
+    canvas = tk.Canvas(root, width=N * 30 + (N + 1) * 10, height=290)
     canvas.pack()
 
     # Sol
-    canvas.create_rectangle(0, 0, 1130, 290, fill='#3C3C4B', width=0)
+    canvas.create_rectangle(0, 0, N * 30 + (N + 1) * 10, 290, fill='#3C3C4B', width=0)
 
     # Places
-    places = [[None for j in range(6)] for i in range(28)]
-    textes = [[None for j in range(6)] for i in range(28)]
-    couleurs = [[None for j in range(6)] for i in range(28)]
+    places = [[None for j in range(P)] for i in range(N)]
+    textes = [[None for j in range(P)] for i in range(N)]
+    couleurs = [[None for j in range(P)] for i in range(N)]
 
-    for i in range(28):
-        for j in range(6):
+    for i in range(N):
+        for j in range(P):
             if i == 11:
                 couleurs[i][j] = '#E63232'
             
@@ -115,7 +116,9 @@ def new_aff(tab, ind, m):
     # Passagers
     x_barycentre = 0
     y_barycentre = 0
+    poids_total = 0
     transits = []
+    groupe_max = ind[-1].idgroupe
     K = len(ind)
     for k in range(K):
         for i in range(len(tab)):
@@ -123,13 +126,14 @@ def new_aff(tab, ind, m):
                 if tab[i, j, k] == 1:
                     x = 10 + i * (30 + 10) + 15
                     y = 10 + (j + j // 3) * (30 + 10) + 15
-                    x_barycentre += x
-                    y_barycentre += y
+                    x_barycentre += x * ind[k].masse
+                    y_barycentre += y * ind[k].masse
+                    poids_total += ind[k].masse
                     textes[i][j] = canvas.create_text(x, y, text=str(ind[k].idgroupe), fill='#FFFFFF')
                     if ind[k].transit > 0 and ind[k].transit not in transits:
                         transits.append(ind[k].transit)
-    x_barycentre = x_barycentre / K
-    y_barycentre = y_barycentre / K
+    x_barycentre = x_barycentre / poids_total
+    y_barycentre = y_barycentre / poids_total
     transits.sort()
 
 
@@ -219,6 +223,24 @@ def new_aff(tab, ind, m):
 
     transit_bouton = tk.Button(root, text='Transit', command=transit_command)
     transit_bouton.pack()
+
+    # Groupes
+    def groupes_command():
+        global etat_couleurs
+        etat_couleurs = 'groupes'
+
+        for k in range(K):
+            for i in range(len(tab)):
+                for j in range(len(tab[0])):
+                    if tab[i, j, k] == 1:
+                        if ind[k].idgroupe == int(groupes_spinbox.get()):
+                            canvas.itemconfig(places[i][j], fill='#00A000')
+                        else:
+                            canvas.itemconfig(places[i][j], fill='#000000')
+
+
+    groupes_spinbox = tk.Spinbox(root, from_=1, to=groupe_max, command=groupes_command)
+    groupes_spinbox.pack()
 
     # Main loop
     root.mainloop()
