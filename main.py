@@ -5,9 +5,10 @@ from contraintes import barycentre, unicite_personne,unicite_siege,symetrie,chef
 from objectif import *
 from lirexcel import lirexcel
 from affichage import affiche_texte, affiche_avion
+from tk_ffichage import new_aff
 
 
-N = 30
+N = 28
 P = 6
 scenario = 0
 
@@ -29,3 +30,4 @@ if __name__ == '__main__':
     m.optimize()
     affiche_texte(X.x,ind,m)
     affiche_avion(X.x,ind,m)
+    new_aff(X.x, ind, m)

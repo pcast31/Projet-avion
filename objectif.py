@@ -77,9 +77,9 @@ def bonus_seul(model, X, ind):
         for l in range(K):
             if ind[l] in ind[k].groupe:    
                 lien[k].append(l) 
-    bordure = sum([X[i,j,k] for k in range(K) for i in range(N) for j in [0,5] if len(lien[k]) == 0])
-    milieu = sum([X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2) for i in range(N) for j in [1] if len(lien[k]) > 0 and lien[k][0] > k]) #  and lien[k][0] > k pour ne donner le bonus qu'une fois par groupe
-    milieu = sum([X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2,K) for i in range(N) for j in [4] if len(lien[k]) > 0 and lien[k][0] > k])
+    bordure = 0.5*sum([X[i,j,k] for k in range(K) for i in range(N) for j in [0,5] if len(lien[k]) == 0])
+    milieu = sum([2*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2) for i in range(N) for j in [1] if len(lien[k]) > 0 and lien[k][0] > k]) #  and lien[k][0] > k pour ne donner le bonus qu'une fois par groupe
+    milieu = sum([2*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2,K) for i in range(N) for j in [4] if len(lien[k]) > 0 and lien[k][0] > k])
     return  milieu + bordure
 
 def fct_objectif(model, X, ind):
