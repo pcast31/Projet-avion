@@ -1,6 +1,9 @@
 import numpy as np
      
 def affiche_texte(tab,ind,m):
+    """
+    Récapitule en français le placements des passagers.
+    """
     bar_x=0
     bar_y=0
     K=len(tab[0][0])
@@ -15,6 +18,9 @@ def affiche_texte(tab,ind,m):
     print("score :",m.objVal)
 
 def affiche_avion(tab,ind,m):
+    """
+    Affiche un tableau représentant les placements : 0 = individu seul, -1 = place vide, sinon le numéro de groupe.
+    """
     (N,P,K) = np.shape(tab)
     avion = -1*np.ones((N,P))
     g = 1

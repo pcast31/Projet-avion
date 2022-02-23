@@ -9,7 +9,7 @@ def correspondance(model, X, ind):
     (N,P,K) = np.shape(X)
     lst = []
     for k in range(K):
-        if 0 < ind[k].transit <= 90:
+        if 0 < ind[k].transit <= 90: # Notons la malheureuse convention fixant à 0 le temps de transit d'un individu n'ayant pas de correspondance
             lst.append(k)
     corres = sum([X[i,j,k] for j in range(P) for i in range(int(N/3)) for k in lst])
     return corres
@@ -54,8 +54,8 @@ def bonus_groupe1(model, X, ind):
                     model.addConstr(T[i][j][k][3][l] >= X[i,j,k] + X[i+1,j,l] - 1)
        
     group = sum([2*T[i][j][k][0][l] + 2*T[i][j][k][2][l] + T[i][j][k][1][l] + T[i][j][k][3][l] for k in range(K)
-                    for j in range(1,P-1) for i in range(1,N-1) for l in lien[k]]) 
-    droite = sum([ 2*T[i][5][k][2][l] + T[i][5][k][1][l] + T[i][5][k][3][l] for k in range(K)
+                    for j in range(1,P-1) for i in range(1,N-1) for l in lien[k]]) # Pour une place à l'intérieur de l'avant
+    droite = sum([ 2*T[i][5][k][2][l] + T[i][5][k][1][l] + T[i][5][k][3][l] for k in range(K) # Pour le bord
                     for i in range(1,N-1) for l in lien[k]]) 
     avant = sum([2*T[0][j][k][0][l] + 2*T[0][j][k][2][l] + T[0][j][k][3][l] for k in range(K)
                     for j in range(1,P-1) for l in lien[k]]) 
