@@ -57,6 +57,33 @@ def bonus_groupe(model, X, ind):
                     for j in range(1,P-1) for l in lien[k]]) 
     return group 
 
+def bonus_absolu(model,X,ind):
+    (N,P,K) = np.shape(X)
+    lien = [[] for _ in range(K)]
+    for k in range(K):
+        for l in range(K):
+            if ind[l] in ind[k].groupe:    
+                lien[k].append(l)
+    traite=[]
+    dic={}
+    bonus=0
+    for k in range(K):
+        if ind[k] not in traite:
+            groupe=[ind[k].id]+lien[k]
+            for l in groupe:
+                traite.append(l)
+            for i in range(len(groupe)-1):
+                    l1=groupe[i]
+                    l2=groupe[i+1]
+                    if l1>l2:
+                        dic[(l1,l2)]=model.addVar(vtype=GRB.INTEGER)
+                        model.addConstr(dic[(l1,l2)]>=sum([sum([i*X[i,j,l1]-i*X[i,j,l2] for i in range(N)]) for j in range(P)]))
+                        model.addConstr(dic[(l1,l2)]>=sum([sum([i*X[i,j,l2]-i*X[i,j,l1] for i in range(N)]) for j in range(P)]))
+                        bonus+=dic[(l1,l2)]
+    return bonus
+
+
+
 def bonus_groupe2(model, X, ind):
     (N,P,K) = np.shape(X)
     lien = [[] for _ in range(K)]
@@ -79,7 +106,7 @@ def bonus_seul(model, X, ind):
             if ind[l] in ind[k].groupe:    
                 lien[k].append(l) 
     bordure = sum([X[i,j,k] for k in range(K) for i in range(N) for j in [0,5] if len(lien[k]) == 0])
-    milieu = sum([X[i,j,k] for k in range(K) for i in range(N) for j in range(1,5) if len(lien[k]) >= 3])
+    milieu = sum([X[i,j,k] for k in range(K) for i in range(N) for j in range(1,5) if len(lien[k]) >= 3 or len(lien[k])==1])
     return milieu
 
 def bonus_par_groupe(model,X,ind):
@@ -87,18 +114,25 @@ def bonus_par_groupe(model,X,ind):
     bonus=0
     traite=[]
     cote=0
+    poid_tot=[0,0]
     for k in range(K):
         if k not in traite:
             groupe=[ind[k]]+ind[k].groupe
             if len(groupe)<=3 and len(groupe)>1:
+                poid=sum([i.masse for i in groupe])
                 for l in groupe:
                     traite.append(l.id)
-                cote=(cote+1)%2
-                if len(groupe)==3:
-                    bonus+=sum([sum([sum([X[i,j,l.id] for i in range(N)])for j in range(3*cote,3*cote+3)]) for l in groupe])
+                if poid_tot[0]>poid_tot[1]:    
+                    cote=1
+                    poid_tot[1]+=poid
                 else:
-                    x=randint(0,1)
-                    bonus+=sum([sum([sum([X[i,j,l.id] for i in range(N)])for j in range(3*cote+x,3*cote+2+x)]) for l in groupe])
+                    cote=0
+                    poid_tot[0]+=poid
+                #if len(groupe)==3:
+                bonus+=sum([sum([sum([X[i,j,l.id] for i in range(N)])for j in range(3*cote,3*cote+3)]) for l in groupe])
+                #else:
+                #    x=randint(0,1)
+                #    bonus+=sum([sum([sum([X[i,j,l.id] for i in range(N)])for j in range(3*cote+x,3*cote+2+x)]) for l in groupe])
                 #for i in range(N):
                 #    for j in range(3*cote,3*cote+3):
                 #        for l in groupe:
@@ -108,4 +142,4 @@ def bonus_par_groupe(model,X,ind):
 
 def fct_objectif(model, X, ind):
     bonus_par_groupe(model,X,ind)
-    model.setObjective(bonus_groupe2(model, X, ind) - correspondance(model, X, ind) - 0.2*bonus_seul(model, X, ind)-4*bonus_par_groupe(model,X,ind), GRB.MINIMIZE) #
+    model.setObjective(bonus_absolu(model,X,ind) - correspondance(model, X, ind) - bonus_seul(model, X, ind)-bonus_par_groupe(model,X,ind), GRB.MINIMIZE) 
