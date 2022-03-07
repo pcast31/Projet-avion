@@ -192,6 +192,10 @@ def new_aff(N, P, tab, ind, m):
                             canvas.itemconfig(places[i][j], fill='#0095FF')
                         elif ind[k].categorie == 'F':
                             canvas.itemconfig(places[i][j], fill='#c800FF')
+                        elif ind[k].categorie == 'R':
+                            canvas.itemconfig(places[i][j], fill='#00A000')
+                        elif ind[k].categorie == 'B':
+                            canvas.itemconfig(places[i][j], fill='#A0A000')
                         else:
                             canvas.itemconfig(places[i][j], fill='#FF7F00')
         if etat_couleurs == 'categories':
