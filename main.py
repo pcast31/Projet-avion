@@ -17,7 +17,6 @@ scenario = 2
 if __name__ == '__main__':
     m=Model()
     ind=lirexcel(scenario)
-    #ind = ind[:len(ind)//2]
     K=len(ind)
     print(K)
     X=initialise(m,N,P,K)
