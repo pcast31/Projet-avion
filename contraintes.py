@@ -103,3 +103,16 @@ def chef_de_groupe(model, X, ind):
             for l in lien[k]:
                 model.addConstr(sum([i*X[i,j,k] for i in range(N) for j in range(P)]) <= sum([i*X[i,j,l] for i in range(N) for j in range(P)]))
                 #model.addConstr(sum([j*X[i,j,k] for j in range(P) for i in range(N)]) <= sum([j*X[i,j,l] for j in range(P) for i in range(N)]))
+
+
+def enfants(m, X,ind, N, P, K):
+    adulte=[]
+    for k in range(K):
+        if ind[k].masse>40:
+            adulte.append(k)
+    for k in range(K):
+        if ind[k].masse==35:
+            for i in range(N):
+                for j in range(P):
+                    
+
