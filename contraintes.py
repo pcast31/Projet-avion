@@ -127,3 +127,24 @@ def chaises_roulantes(model, X, ind):
                 + sum([X[i+1,3,l] for l in range(K)]) + sum([X[i+1,4,l] for l in range(K)]) <= 4)
                 model.addConstr(4*X[i,1,k] + sum([X[i,2,l] for l in range(K)]) 
                 + sum([X[i+1,1,l] for l in range(K)]) + sum([X[i+1,2,l] for l in range(K)]) <= 4)
+
+def civieres(model, X, ind):
+    """
+    S'assure que les civières occupent un rectangle 4x3.
+    """
+    (N, P, K) = np.shape(X)
+    for k in range(K):
+        if ind[k].categorie == "B":
+            model.addConstr(sum([X[i,3,k] + X[i,0,k] for i in range(N)]) == 1)
+            model.addConstr(sum([X[i,j,k] for i in range(N-4,N) for j in range(P)]) == 0)
+            for i in range(N-3):
+                model.addConstr(12*X[i,3,k] + sum([X[i,4,l] for l in range(K)])  
+                + sum([X[i,5,l] for l in range(K)]) 
+                + sum([X[i+a,3,l] for l in range(K) for a in range(1,4)]) 
+                + sum([X[i+a,4,l] for l in range(K) for a in range(1,4)])
+                + sum([X[i+a,5,l] for l in range(K) for a in range(1,4)]) <= 12)
+                model.addConstr(12*X[i,0,k] + sum([X[i,1,l] for l in range(K)])  
+                + sum([X[i,2,l] for l in range(K)]) 
+                + sum([X[i+a,0,l] for l in range(K) for a in range(1,4)]) 
+                + sum([X[i+a,1,l] for l in range(K) for a in range(1,4)])
+                + sum([X[i+a,2,l] for l in range(K) for a in range(1,4)]) <= 12)

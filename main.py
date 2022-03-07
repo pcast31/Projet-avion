@@ -1,7 +1,7 @@
 from initialisation import initialise
 from gurobipy import *
 import numpy as np
-from contraintes import barycentre, chaises_roulantes, unicite_personne,unicite_siege,symetrie,chef_de_groupe
+from contraintes import *
 from objectif import *
 from lirexcel import lirexcel, lirexcel2
 from affichage import affiche_texte, affiche_avion
@@ -26,6 +26,7 @@ if __name__ == '__main__':
     chef_de_groupe(m, X, ind)
     #symetrie(m,X,ind,N,P,K)
     chaises_roulantes(m, X, ind)
+    civieres(m, X, ind)
     fct_objectif(m, X, ind)
     m.update()
     m.optimize()
