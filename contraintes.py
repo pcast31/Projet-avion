@@ -113,16 +113,17 @@ def chef_de_groupe(model, X, ind):
                                 <= sum([i*X[i, j, l] for i in range(N) for j in range(P)]))
                 #model.addConstr(sum([j*X[i,j,k] for j in range(P) for i in range(N)]) <= sum([j*X[i,j,l] for j in range(P) for i in range(N)]))
 
-
-def enfants(m, X,ind, N, P, K):
-    adulte=[]
-
+def chaises_roulantes(model, X, ind):
+    """
+    S'assure que les chaises roulantes occupent un carré 2x2 le long de l'allée centrale.
+    """
+    (N, P, K) = np.shape(X)
     for k in range(K):
-        if ind[k].masse>40:
-            adulte.append(k)
-
-    for k in range(K):
-        if ind[k].masse==35:
-            for i in range(N):
-                for j in range(P):
-                    for l in adulte:
+        if ind[k].categorie == "R":
+            model.addConstr(sum([X[i,3,k] + X[i,1,k] for i in range(N)]) == 1)
+            model.addConstr(sum([X[N-1,j,k] for j in range(P)]) == 0 )
+            for i in range(N-1):
+                model.addConstr(4*X[i,3,k] + sum([X[i,4,l] for l in range(K)]) 
+                + sum([X[i+1,3,l] for l in range(K)]) + sum([X[i+1,4,l] for l in range(K)]) <= 4)
+                model.addConstr(4*X[i,1,k] + sum([X[i,2,l] for l in range(K)]) 
+                + sum([X[i+1,1,l] for l in range(K)]) + sum([X[i+1,2,l] for l in range(K)]) <= 4)
