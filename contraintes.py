@@ -1,6 +1,9 @@
 import numpy as np
 
 def barycentre(m, X, ind, N, P, K):
+    """
+    Calcule le barycentre et le constraint à rester dans une zone donnée.
+    """
     max_bar_j = 4
     max_bar_i = 17
     min_bar_j = 2
@@ -37,6 +40,9 @@ def barycentre(m, X, ind, N, P, K):
 
 
 def unicite_personne(m, X, N, P, K):
+    """
+    Ajoute la contrainte voulant que chaque passager ait une et une seule place.
+    """
     contraintes = []
     for k in range(K):
         s = 0
@@ -49,6 +55,9 @@ def unicite_personne(m, X, N, P, K):
 
 
 def unicite_siege(m, X, N, P, K):
+    """
+    Ajoute la contrainte voulant que chaque place ne puisse acceuilir plusieurs passagers.
+    """
     contraintes = []
     for i in range(N):
         for j in range(P):
@@ -61,6 +70,9 @@ def unicite_siege(m, X, N, P, K):
 
 
 def symetrie(m,X,ind,N,P,K):
+    """
+    Avorton de fonction visant à briser certaines symétries du problème. 
+    """
     place_min={'H':-1,'F':-1}
     for k in range(K):
         if ind[k].groupe==[] and ind[k].transit>90 and place_min[ind[k].categorie]>=0:
@@ -71,6 +83,9 @@ def symetrie(m,X,ind,N,P,K):
             place_min[ind[k].categorie]=k
 
 def chef_de_groupe(model, X, ind):
+    """
+    Impose au premier membre de chaque groupe d'être le plus à l'avant de l'avion, nécessaire pour bonus_groupe2.
+    """
     (N,P,K) = np.shape(X)
     lien = [[] for _ in range(K)]
     for k in range(K):

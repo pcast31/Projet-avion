@@ -10,7 +10,7 @@ from tk_ffichage import new_aff
 
 N = 30
 P = 6
-scenario = 0
+scenario = 2
 
 
 
@@ -32,4 +32,4 @@ if __name__ == '__main__':
     m.optimize()
     affiche_texte(X.x,ind,m)
     affiche_avion(X.x,ind,m)
-    new_aff(N,P,X.x, ind, m)
+    new_aff(N, P, X.x, ind, m)
