@@ -1,6 +1,7 @@
 import numpy as np
 from gurobipy import *
 
+
 def barycentre(m, X, ind, N, P, K):
     """
     Calcule le barycentre et le contraint à rester dans une zone donnée.
@@ -32,7 +33,7 @@ def barycentre(m, X, ind, N, P, K):
             bar[0] += ind[k].masse*(i0 + 1/2)
             bar[1] += ind[k].masse*(j0 + 1/2)
             mtot += ind[k].masse
-        else: 
+        else:
             bar[0] += ind[k].masse*(i0 + 3/2)
             bar[1] += ind[k].masse*(j0 + 1)
             mtot += ind[k].masse
@@ -77,7 +78,7 @@ def unicite_siege(m, X, N, P, K):
 
 def symetrie(m, X, ind, N, P, K):
     """
-    Avorton de fonction visant à briser certaines symétries du problème. 
+    Avorton de fonction visant à briser certaines symétries du problème.
     """
     place_min = {'H': -1, 'F': -1}
     for k in range(K):
@@ -113,6 +114,7 @@ def chef_de_groupe(model, X, ind):
                                 <= sum([i*X[i, j, l] for i in range(N) for j in range(P)]))
                 #model.addConstr(sum([j*X[i,j,k] for j in range(P) for i in range(N)]) <= sum([j*X[i,j,l] for j in range(P) for i in range(N)]))
 
+
 def chaises_roulantes(model, X, ind):
     """
     S'assure que les chaises roulantes occupent un carré 2x2 le long de l'allée centrale.
@@ -120,13 +122,13 @@ def chaises_roulantes(model, X, ind):
     (N, P, K) = np.shape(X)
     for k in range(K):
         if ind[k].categorie == "R":
-            model.addConstr(sum([X[i,3,k] + X[i,1,k] for i in range(N)]) == 1)
-            model.addConstr(sum([X[N-1,j,k] for j in range(P)]) == 0 )
+            model.addConstr(sum([X[i, 3, k] + X[i, 1, k] for i in range(N)]) == 1)
+            model.addConstr(sum([X[N-1, j, k] for j in range(P)]) == 0)
             for i in range(N-1):
-                model.addConstr(4*X[i,3,k] + sum([X[i,4,l] for l in range(K)]) 
-                + sum([X[i+1,3,l] for l in range(K)]) + sum([X[i+1,4,l] for l in range(K)]) <= 4)
-                model.addConstr(4*X[i,1,k] + sum([X[i,2,l] for l in range(K)]) 
-                + sum([X[i+1,1,l] for l in range(K)]) + sum([X[i+1,2,l] for l in range(K)]) <= 4)
+                model.addConstr(4*X[i, 3, k] + sum([X[i, 4, l] for l in range(K)])
+                                + sum([X[i+1, 3, l] for l in range(K)]) + sum([X[i+1, 4, l] for l in range(K)]) <= 4)
+                model.addConstr(4*X[i, 1, k] + sum([X[i, 2, l] for l in range(K)])
+                                + sum([X[i+1, 1, l] for l in range(K)]) + sum([X[i+1, 2, l] for l in range(K)]) <= 4)
 
 def civieres(model, X, ind):
     """
@@ -155,11 +157,20 @@ def lutte_des_classes(model, X, ind):
     taille_bourgeois est le nombre de rangée de siège affecté en classe business
     """
     (N, P, K) = np.shape(X)
-    taille_bourgeois=model.addVar(vtype=GRB.INTEGER,name="taille_business")
+    taille_bourgeois = model.addVar(vtype=GRB.INTEGER, name="taille_business")
     for k in range(K):
-        if ind[k].classe==1:
-            model.addConstr(taille_bourgeois-sum([sum([i*X[i,j,k] for i in range(N)]) for j in range(P)])>=0)
-            model.addConstr(sum([X[i,1,k]+X[i,4,k] for i in range(N)])==0)
+        if ind[k].classe == 1:
+            model.addConstr(taille_bourgeois -
+                            sum([sum([i*X[i, j, k] for i in range(N)]) for j in range(P)]) >= 0)
+            model.addConstr(sum([X[i, 1, k]+X[i, 4, k] for i in range(N)]) == 0)
         else:
             model.addConstr(taille_bourgeois-sum([sum([i*X[i,j,k] for i in range(N)]) for j in range(P)])<=-0.1)
     return taille_bourgeois
+            
+def enfant_issue_secours(model, X, ind):
+    """
+    Impose aux enfants de ne pas se situer devant les issues de secours.
+    """
+    if ind.categorie == 'E':
+        for j in range(1, 7):
+            model.addConstr(X[12, j, ind] == 0, name="C_enf_sec"+str(j))
