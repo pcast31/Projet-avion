@@ -52,7 +52,7 @@ def lirexcel(scenario, chemin='DataSeating.xlsx'):
     return l
 
 
-def lirexcel(scenario, chemin='DataSeating.xlsx'):
+def lirexcel2(scenario, chemin='DataSeating.xlsx'):
     df = pd.read_excel(chemin, sheet_name=scenario)
     df = df.drop(df.tail(2).index)
     df = df.fillna(0)
