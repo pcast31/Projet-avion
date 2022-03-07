@@ -126,10 +126,39 @@ def new_aff(N, P, tab, ind, m):
                 if tab[i, j, k] == 1:
                     x = 10 + i * (30 + 10) + 15
                     y = 10 + (j + j // 3) * (30 + 10) + 15
+
+                    if ind[k].categorie == 'R':
+                        canvas.delete(places[i + 1][j])
+                        canvas.delete(places[i][j + 1])
+                        canvas.delete(places[i + 1][j + 1])
+
+                        canvas.coords(places[i][j], x - 15, y - 15, x - 15 + 30 + 10 + 30, y - 15 + 30 + 10 + 30)
+
+                        x += 15 + 5
+                        y += 15 + 5
+                    elif ind[k].categorie == 'B':
+                        #canvas.delete(places[i + 1][j])
+                        #canvas.delete(places[i + 2][j])
+                        #canvas.delete(places[i + 3][j])
+                        #canvas.delete(places[i][j + 1])
+                        #canvas.delete(places[i + 1][j + 1])
+                        #canvas.delete(places[i + 2][j + 1])
+                        #canvas.delete(places[i + 3][j + 1])
+                        #canvas.delete(places[i][j + 2])
+                        #canvas.delete(places[i + 1][j + 2])
+                        #canvas.delete(places[i + 2][j + 2])
+                        #canvas.delete(places[i + 3][j + 2])
+
+                        canvas.coords(places[i][j], x - 15, y - 15, x - 15 + 4 * 30 + 3 * 10, y - 15 + 3 * 30 + 2 * 10)
+
+                        x += 15 + 10 + 30 + 5
+                        y += 15 + 10 + 15
+
                     x_barycentre += x * ind[k].masse
                     y_barycentre += y * ind[k].masse
                     poids_total += ind[k].masse
                     textes[i][j] = canvas.create_text(x, y, text=str(ind[k].idgroupe), fill='#FFFFFF')
+
                     if ind[k].transit > 0 and ind[k].transit not in transits:
                         transits.append(ind[k].transit)
     x_barycentre = x_barycentre / poids_total
@@ -227,6 +256,29 @@ def new_aff(N, P, tab, ind, m):
 
     transit_bouton = tk.Button(root, text='Transit', command=transit_command)
     transit_bouton.pack()
+
+    # Billets
+    def billets_command():
+        global etat_couleurs
+
+        for k in range(K):
+            for i in range(len(tab)):
+                for j in range(len(tab[0])):
+                    if tab[i, j, k] == 1:
+                        if etat_couleurs == 'billets':
+                            canvas.itemconfig(places[i][j], fill=couleurs[i][j])
+                        elif ind[k].classe == 0:
+                            canvas.itemconfig(places[i][j], fill='#0095FF')
+                        else:
+                            canvas.itemconfig(places[i][j], fill='#FF00FF')
+        
+        if etat_couleurs == 'billets':
+            etat_couleurs = 'base'
+        else:
+            etat_couleurs = 'billets'
+    
+    billets_bouton = tk.Button(root, text='Billets', command=billets_command)
+    billets_bouton.pack()
 
     # Groupes
     def groupes_command():
