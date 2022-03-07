@@ -3,7 +3,7 @@ import numpy as np
 
 def barycentre(m, X, ind, N, P, K):
     """
-    Calcule le barycentre et le constraint à rester dans une zone donnée.
+    Calcule le barycentre et le contraint à rester dans une zone donnée.
     """
     max_bar_j = 4
     max_bar_i = 17
@@ -24,10 +24,18 @@ def barycentre(m, X, ind, N, P, K):
                 else:
                     j0 += (j+1)*X[i, j, k]  # on compte la largeur du couloir
 
-        bar[0] += ind[k].masse*i0
-        bar[1] += ind[k].masse*j0
-        mtot += ind[k].masse
-
+        if ind[k].categorie in ["H", "F", "E"]:
+            bar[0] += ind[k].masse*i0
+            bar[1] += ind[k].masse*j0
+            mtot += ind[k].masse
+        elif ind[k] == "R":
+            bar[0] += ind[k].masse*(i0 + 1/2)
+            bar[1] += ind[k].masse*(j0 + 1/2)
+            mtot += ind[k].masse
+        else: 
+            bar[0] += ind[k].masse*(i0 + 3/2)
+            bar[1] += ind[k].masse*(j0 + 1)
+            mtot += ind[k].masse
     bar[0] /= mtot
     bar[1] /= mtot
 

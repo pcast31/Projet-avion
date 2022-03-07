@@ -2,7 +2,7 @@ import pandas as pd
 from individu import Individu
 
 
-def lirexcel(scenario, chemin='Projet-avion\DataSeating.xlsx'):
+def lirexcel(scenario, chemin='DataSeating.xlsx'):
     df = pd.read_excel(chemin, sheet_name=scenario)
     df = df.drop(df.tail(2).index)
     df = df.fillna(0)
