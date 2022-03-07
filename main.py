@@ -25,7 +25,7 @@ if __name__ == '__main__':
     barycentre(m,X,ind,N,P,K)
     unicite_personne(m,X,N,P,K)
     unicite_siege(m,X,N,P,K)
-    #chef_de_groupe(m, X, ind)
+    chef_de_groupe(m, X, ind)
     #symetrie(m,X,ind,N,P,K)
     fct_objectif(m, X, ind)
     m.update()
