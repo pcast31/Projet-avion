@@ -2,7 +2,7 @@ import pandas as pd
 from individu import Individu
 
 
-def lirexcel(scenario, chemin='DataSeating.xlsx'):
+def lirexcel(scenario, chemin='Projet-avion\DataSeating.xlsx'):
     df = pd.read_excel(chemin, sheet_name=scenario)
     df = df.drop(df.tail(2).index)
     df = df.fillna(0)
@@ -12,7 +12,8 @@ def lirexcel(scenario, chemin='DataSeating.xlsx'):
     df['Enfants'] = df['Enfants'].apply(lambda x: int(x))
     df['WCHR'] = df['WCHR'].apply(lambda x: int(x))
     df['WCHB'] = df['WCHB'].apply(lambda x: int(x))
-    df['TransitTime'] = df['TransitTime'].apply(lambda x: 0 if type(x) == int else 60 * x.hour + x.minute)
+    df['TransitTime'] = df['TransitTime'].apply(
+        lambda x: 0 if type(x) == int else 60 * x.hour + x.minute)
 
     l = []
     id = 0
