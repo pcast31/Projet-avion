@@ -3,7 +3,7 @@ from gurobipy import *
 import numpy as np
 from contraintes import barycentre, unicite_personne,unicite_siege,symetrie,chef_de_groupe
 from objectif import *
-from lirexcel import lirexcel
+from lirexcel import lirexcel, lirexcel2
 from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
 
@@ -15,7 +15,7 @@ scenario = 0
 
 if __name__ == '__main__':
     m=Model()
-    ind=lirexcel(scenario)
+    ind=lirexcel2(scenario)
     #ind = ind[:len(ind)//2]
     K=len(ind)
     X=initialise(m,N,P,K)
