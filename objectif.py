@@ -1,4 +1,5 @@
 import numpy as np
+from random import randint
 from gurobipy import *
 
 def correspondance(model, X, ind):
@@ -64,6 +65,33 @@ def bonus_groupe1(model, X, ind):
     arriere = sum([2*T[N-1][j][k][0][l] + 2*T[N-1][j][k][2][l] + T[N-1][j][k][1][l] for k in range(K)
                     for j in range(1,P-1) for l in lien[k]]) 
     return group 
+
+def bonus_absolu(model,X,ind):
+    (N,P,K) = np.shape(X)
+    lien = [[] for _ in range(K)]
+    for k in range(K):
+        for l in range(K):
+            if ind[l] in ind[k].groupe:    
+                lien[k].append(l)
+    traite=[]
+    dic={}
+    bonus=0
+    for k in range(K):
+        if ind[k] not in traite:
+            groupe=[ind[k].id]+lien[k]
+            for l in groupe:
+                traite.append(l)
+            for i in range(len(groupe)-1):
+                    l1=groupe[i]
+                    l2=groupe[i+1]
+                    if l1>l2:
+                        dic[(l1,l2)]=model.addVar(vtype=GRB.INTEGER)
+                        model.addConstr(dic[(l1,l2)]>=sum([sum([i*X[i,j,l1]-i*X[i,j,l2] for i in range(N)]) for j in range(P)]))
+                        model.addConstr(dic[(l1,l2)]>=sum([sum([i*X[i,j,l2]-i*X[i,j,l1] for i in range(N)]) for j in range(P)]))
+                        bonus+=dic[(l1,l2)]
+    return bonus
+
+
 
 def bonus_groupe2(model, X, ind):
     """

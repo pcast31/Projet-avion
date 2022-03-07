@@ -1,5 +1,5 @@
 import numpy as np
-
+from gurobipy import *
 
 def barycentre(m, X, ind, N, P, K):
     """
@@ -148,3 +148,18 @@ def civieres(model, X, ind):
                 + sum([X[i+a,0,l] for l in range(K) for a in range(1,4)]) 
                 + sum([X[i+a,1,l] for l in range(K) for a in range(1,4)])
                 + sum([X[i+a,2,l] for l in range(K) for a in range(1,4)]) <= 12)
+
+def lutte_des_classes(model, X, ind):
+    """
+    ajoute les contraintes sur la classe business
+    taille_bourgeois est le nombre de rangée de siège affecté en classe business
+    """
+    (N, P, K) = np.shape(X)
+    taille_bourgeois=model.addVar(vtype=GRB.INTEGER,name="taille_business")
+    for k in range(K):
+        if ind[k].classe==1:
+            model.addConstr(taille_bourgeois-sum([sum([i*X[i,j,k] for i in range(N)]) for j in range(P)])>=0)
+            model.addConstr(sum([X[i,1,k]+X[i,4,k] for i in range(N)])==0)
+        else:
+            model.addConstr(taille_bourgeois-sum([sum([i*X[i,j,k] for i in range(N)]) for j in range(P)])<=-0.1)
+    return taille_bourgeois

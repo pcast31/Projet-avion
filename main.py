@@ -13,11 +13,12 @@ P = 6
 scenario = 7
 
 
+
 if __name__ == '__main__':
     m=Model()
     ind=lirexcel2(scenario)
-    #ind = ind[:len(ind)//2]
     K=len(ind)
+    print(K)
     X=initialise(m,N,P,K)
     m.update()
     barycentre(m,X,ind,N,P,K)
@@ -27,9 +28,11 @@ if __name__ == '__main__':
     #symetrie(m,X,ind,N,P,K)
     chaises_roulantes(m, X, ind)
     civieres(m, X, ind)
+    taille=lutte_des_classes(m,X,ind)
     fct_objectif(m, X, ind)
     m.update()
     m.optimize()
     affiche_texte(X.x,ind,m)
     affiche_avion(X.x,ind,m)
     new_aff(N, P, X.x, ind, m)
+    print(taille.x)
