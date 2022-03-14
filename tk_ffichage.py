@@ -362,6 +362,12 @@ def new_aff(N, P, tab, ind, m):
                             canvas.itemconfig(places[i][j], fill='#00A000')
                         else:
                             canvas.itemconfig(places[i][j], fill='#000000')
+        
+        for legende in legendes:
+            canvas.delete(legende)
+
+        legendes.append(canvas.create_rectangle(10, 130, 10 + 30, 130 + 30, fill='#00A000', width=0))
+        legendes.append(canvas.create_text(110, 145, text=f'Membre du groupe {int(groupes_spinbox.get())}', fill="#FFFFFF"))
 
 
     groupes_spinbox = tk.Spinbox(root, from_=1, to=groupe_max, command=groupes_command)
