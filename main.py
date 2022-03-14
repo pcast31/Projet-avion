@@ -10,7 +10,7 @@ from tk_ffichage import new_aff
 
 N = 30
 P = 6
-scenario = 7
+scenario = 5
 
 
 
@@ -28,6 +28,7 @@ if __name__ == '__main__':
     #symetrie(m,X,ind,N,P,K)
     chaises_roulantes(m, X, ind)
     civieres(m, X, ind)
+    nenfants(m,X,ind)
     taille=lutte_des_classes(m,X,ind)
     fct_objectif(m, X, ind)
     m.update()

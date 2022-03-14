@@ -2,7 +2,7 @@ import numpy as np
 from random import randint
 from gurobipy import *
 
-def correspondance(model, X, ind):
+def correspondance(model, X, ind, b):
     """
     On donne un point pour chaque passager ayant un temps de transit
     inférieur à 90 minutes assis dans le prmeier tier de l'avion.
@@ -13,7 +13,7 @@ def correspondance(model, X, ind):
         if 0 < ind[k].transit <= 90: # Notons la malheureuse convention fixant à 0 le temps de transit d'un individu n'ayant pas de correspondance
             lst.append(k)
     corres = sum([X[i,j,k] for j in range(P) for i in range(int(N/3)) for k in lst])
-    return corres
+    return b*corres
 
 def bonus_groupe1(model, X, ind):
     """
@@ -93,7 +93,7 @@ def bonus_absolu(model,X,ind):
 
 
 
-def bonus_groupe2(model, X, ind):
+def bonus_groupe2(model, X, ind, a):
     """
     On calcule le nombre de rangées séparant le chef du groupe de chacun de ses compères.
     Puisque ce chef est défini comme étant assis le plus à l'avant de l'avion, on ne calcule que des distances positives.
@@ -110,13 +110,14 @@ def bonus_groupe2(model, X, ind):
         if len(lien[k]) > 0 and lien[k][0] < k: # La seconde condition caractérise un non-chef de groupe
             group = group + sum([sum([i*X[i,j,k] for i in range(N)]) - sum([i*X[i,j,lien[k][0]] for i in range(N)]) for j in range(P)])
             #group = group + 0.2*sum([sum([j*X[i,j,k] for j in range(P)]) - sum([j*X[i,j,lien[k][0]] for j in range(P)]) for i in range(N)])
-    return group 
+    return a*group 
 
-def bonus_seul(model, X, ind):
+def bonus_seul(model, X, ind, coef):
     """
     On récompense le fait qu'un passager seul soit proche d'une fenêtre afin qu'il ne sépare pas un groupe.
     Pour les groupes de 2 ou 3 : on récompense le fait qu'un chef de groupe soit sur les colonnes 2 ou 5, 
     et qu'un non-chef soit sur une place adjacente. On associe à la moitié des passagers l'un des côtés de l'avion.
+    coef est la liste des coefficients devant le bonus pour chaque groupe
     """
     (N,P,K) = np.shape(X)
     lien = [[] for _ in range(K)] # On crée la liste des amis d'un individu donné
@@ -124,15 +125,22 @@ def bonus_seul(model, X, ind):
         for l in range(K):
             if ind[l] in ind[k].groupe:    
                 lien[k].append(l) 
-    bordure = 0.2*sum([X[i,j,k] for k in range(K) for i in range(N) for j in [0,5] if len(lien[k]) == 0]) # Individus seuls
-    milieu = sum([2*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2) for i in range(N) for j in [1] 
-                if len(lien[k]) > 0 and len(lien[k]) < 3 and lien[k][0] > k]) # Groupes, 1ère moitié des passagers
-    milieu2 = sum([2*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2,K) for i in range(N) for j in [4] 
-                if len(lien[k]) > 0 and len(lien[k]) < 3 and lien[k][0] > k]) # Groupes, 2ème moitié des passagers
+    bordure = coef[0]*sum([X[i,j,k] for k in range(K) for i in range(N) for j in [0,5] if len(lien[k]) == 0]) # Individus seuls
+
+    if coef[1] > 0:
+        milieu = sum([coef[1]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2) for i in range(N) for j in [1] 
+                if len(lien[k]) > 0 and len(lien[k]) == 1 and lien[k][0] > k]) # Groupes, 1ère moitié des passagers
+        milieu2 = sum([coef[1]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2,K) for i in range(N) for j in [4] 
+                if len(lien[k]) > 0 and len(lien[k]) == 1 and lien[k][0] > k]) # Groupes, 2ème moitié des passagers
+    if coef[2] > 0:
+        milieu = sum([coef[2]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2) for i in range(N) for j in [1] 
+                if len(lien[k]) > 0 and len(lien[k]) == 2 and lien[k][0] > k]) # Groupes, 1ère moitié des passagers
+        milieu2 = sum([coef[2]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2,K) for i in range(N) for j in [4] 
+                if len(lien[k]) > 0 and len(lien[k]) == 2 and lien[k][0] > k]) # Groupes, 2ème moitié des passagers
     return  milieu + bordure + milieu2
 
-def fct_objectif(model, X, ind):
+def fct_objectif(model, X, ind, coef = [0.2,2,2], a = 1, b = 1):
     """
     Récapitule les différents objectifs, avec les signes qui vont bien.
     """
-    model.setObjective(bonus_groupe2(model, X, ind) - correspondance(model, X, ind) - bonus_seul(model, X, ind), GRB.MINIMIZE) #
+    model.setObjective(bonus_groupe2(model, X, ind, a) - correspondance(model, X, ind, b) - bonus_seul(model, X, ind, coef), GRB.MINIMIZE) #

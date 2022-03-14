@@ -174,3 +174,12 @@ def enfant_issue_secours(model, X, ind):
     if ind.categorie == 'E':
         for j in range(1, 7):
             model.addConstr(X[12, j, ind] == 0, name="C_enf_sec"+str(j))
+
+def nenfants(model, X, ind):
+    """
+    Garantie que les nenfants ne soient pas seuls ༼ つ ◕_◕ ༽つ "
+    """
+    (N,P,K) = np.shape(X)
+    for i in range(N):
+        model.addConstr(sum([ind[k].age*X[i,j,k] for j in range(3,P) for k in range(K)]) >= 0)
+        model.addConstr(sum([ind[k].age*X[i,j,k] for j in range(3) for k in range(K)]) >= 0)
