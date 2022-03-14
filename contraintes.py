@@ -148,8 +148,8 @@ def civieres(model, X, ind):
     for k in range(K):
         if ind[k].categorie == "B":
             model.addConstr(sum([X[i,3,k] + X[i,2,k] for i in range(N)]) == 1)
-            model.addConstr(sum([X[i,j,k] for i in range(4) for j in range(P)]) == 0)
-            for i in range(N-3):
+            model.addConstr(sum([X[i,j,k] for i in range(3) for j in range(P)]) == 0)
+            for i in range(3,N):
                 model.addConstr(12*X[i,3,k] + sum([X[i,4,l] for l in range(K)])  
                 + sum([X[i,5,l] for l in range(K)]) 
                 + sum([X[i-a,3,l] for l in range(K) for a in range(1,4)]) 
