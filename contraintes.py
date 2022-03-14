@@ -7,9 +7,13 @@ def barycentre(m, X, ind, N, P, K):
     Calcule le barycentre et le contraint à rester dans une zone donnée.
     """
     max_bar_j = 4
-    max_bar_i = 17
     min_bar_j = 2
-    min_bar_i = 13
+    if N == 30 :
+        max_bar_i = 17
+        min_bar_i = 13
+    if N == 35:
+        max_bar_i = 20.5
+        min_bar_i = 16.5
 
     bar = [0, 0]
     mtot = 0
@@ -24,7 +28,13 @@ def barycentre(m, X, ind, N, P, K):
                     j0 += j*X[i, j, k]
                 else:
                     j0 += (j+1)*X[i, j, k]  # on compte la largeur du couloir
+        bar[0] += ind[k].masse*i0
+        bar[1] += ind[k].masse*j0
+        mtot += ind[k].masse
 
+        #Le code suivant permet de compter le barycentre 
+        #au centre des chaises roulantes/brancards
+        """
         if ind[k].categorie in ["H", "F", "E"]:
             bar[0] += ind[k].masse*i0
             bar[1] += ind[k].masse*j0
@@ -36,7 +46,7 @@ def barycentre(m, X, ind, N, P, K):
         else:
             bar[0] += ind[k].masse*(i0 + 3/2)
             bar[1] += ind[k].masse*(j0 + 1)
-            mtot += ind[k].masse
+            mtot += ind[k].masse"""
     bar[0] /= mtot
     bar[1] /= mtot
 
