@@ -10,7 +10,7 @@ from tk_ffichage import new_aff
 
 N = 30
 P = 6
-scenario = 2
+scenario = 0
 
 
 
@@ -26,19 +26,11 @@ if __name__ == '__main__':
     unicite_siege(m,X,N,P,K)
     chef_de_groupe(m, X, ind_reduit)
     #symetrie(m,X,ind,N,P,K)
-<<<<<<< HEAD
-    chaises_roulantes(m, X, ind)
-    civieres(m, X, ind)
-    nenfants(m,X,ind)
-    taille=lutte_des_classes(m,X,ind)
-    fct_objectif(m, X, ind, [0.2,2,2])
-=======
     chaises_roulantes(m, X, ind_reduit)
     civieres(m, X, ind_reduit)
     nenfants(m,X,ind_reduit)
     taille=lutte_des_classes(m,X,ind_reduit)
-    fct_objectif(m, X, ind_reduit)
->>>>>>> 14f4f49fb403393e05c88133ec2564ed8505e772
+    fct_objectif(m, X, ind, [0.2,2,2])
     m.update()
     m.optimize()
     affiche_texte(X.x,ind,m)
