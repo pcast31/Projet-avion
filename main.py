@@ -30,7 +30,7 @@ if __name__ == '__main__':
     civieres(m, X, ind)
     nenfants(m,X,ind)
     taille=lutte_des_classes(m,X,ind)
-    fct_objectif(m, X, ind)
+    fct_objectif(m, X, ind, [0.2,2,2])
     m.update()
     m.optimize()
     affiche_texte(X.x,ind,m)
