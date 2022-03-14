@@ -10,7 +10,7 @@ from tk_ffichage import new_aff
 
 N = 30
 P = 6
-scenario = 0
+scenario = 7
 
 
 
