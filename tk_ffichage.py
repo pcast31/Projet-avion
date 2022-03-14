@@ -131,30 +131,50 @@ def new_aff(N, P, tab, ind, m):
                     y = 10 + (j + j // 3) * (30 + 10) + 15
 
                     if ind[k].categorie == 'R':
-                        canvas.delete(places[i + 1][j])
-                        canvas.delete(places[i][j + 1])
-                        canvas.delete(places[i + 1][j + 1])
+                        if j < 3:
+                            canvas.delete(places[i - 1][j])
+                            canvas.delete(places[i][j - 1])
+                            canvas.delete(places[i - 1][j - 1])
 
-                        canvas.coords(places[i][j], x - 15, y - 15, x - 15 + 30 + 10 + 30, y - 15 + 30 + 10 + 30)
+                            canvas.coords(places[i][j], x - 15 - 10 - 30, y - 15 - 10 - 30, x + 15, y + 15)
 
-                        x += 15 + 5
-                        y += 15 + 5
+                        else:
+                            canvas.delete(places[i - 1][j])
+                            canvas.delete(places[i][j + 1])
+                            canvas.delete(places[i - 1][j + 1])
+
+                            canvas.coords(places[i][j], x - 15 - 10 - 30, y - 15, x + 15, y + 15 + 10 + 30)
+
                     elif ind[k].categorie == 'B':
-                        canvas.delete(places[i + 1][j])
-                        canvas.delete(places[i + 2][j])
-                        canvas.delete(places[i + 3][j])
-                        canvas.delete(places[i][j + 1])
-                        canvas.delete(places[i + 1][j + 1])
-                        canvas.delete(places[i + 2][j + 1])
-                        canvas.delete(places[i + 3][j + 1])
-                        canvas.delete(places[i][j - 1])
-                        canvas.delete(places[i + 1][j -1])
-                        canvas.delete(places[i + 2][j - 1])
-                        canvas.delete(places[i + 3][j - 1])
+                        if j < 3:
+                            canvas.delete(places[i - 1][j])
+                            canvas.delete(places[i - 2][j])
+                            canvas.delete(places[i - 3][j])
+                            canvas.delete(places[i][j - 1])
+                            canvas.delete(places[i - 1][j - 1])
+                            canvas.delete(places[i - 2][j - 1])
+                            canvas.delete(places[i - 3][j - 1])
+                            canvas.delete(places[i][j - 2])
+                            canvas.delete(places[i - 1][j - 2])
+                            canvas.delete(places[i - 2][j - 2])
+                            canvas.delete(places[i - 3][j - 2])
 
-                        canvas.coords(places[i][j], x - 15, y - 15 - 10 - 30, x - 15 + 4 * 30 + 3 * 10, y - 15 - 10 - 30 + 3 * 30 + 2 * 10)
+                            canvas.coords(places[i][j], x - 15 - 3 * (10 + 30), y - 15 - 2 * (10 + 30), x + 15, y + 15)
 
-                        x += 15 + 10 + 30 + 5
+                        else:
+                            canvas.delete(places[i - 1][j])
+                            canvas.delete(places[i - 2][j])
+                            canvas.delete(places[i - 3][j])
+                            canvas.delete(places[i][j + 1])
+                            canvas.delete(places[i - 1][j + 1])
+                            canvas.delete(places[i - 2][j + 1])
+                            canvas.delete(places[i - 3][j + 1])
+                            canvas.delete(places[i][j + 2])
+                            canvas.delete(places[i - 1][j + 2])
+                            canvas.delete(places[i - 2][j + 2])
+                            canvas.delete(places[i - 3][j + 2])
+
+                            canvas.coords(places[i][j], x - 15 - 3 * (10 + 30), y - 15, x + 15, y + 15 + 2 * (10 + 30))
 
                     x_barycentre += x * ind[k].masse
                     y_barycentre += y * ind[k].masse
