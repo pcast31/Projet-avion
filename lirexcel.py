@@ -125,7 +125,7 @@ def reduction(scenario,ind, chemin='DataSeating.xlsx'):
             taille_groupe[individu.idgroupe]=0
             
         taille=len(individu.groupe)+1
-        if taille<=3:
+        if taille<=3 or taille==6:
             l.append(individu)
 
         elif taille%3==1:
@@ -141,7 +141,6 @@ def reduction(scenario,ind, chemin='DataSeating.xlsx'):
         if indi.idgroupe not in groupe :
             groupe[indi.idgroupe]=[]
         groupe[indi.idgroupe].append(indi)
-    print(groupe)
     for id_petit_groupe in groupe:
         petit_groupe=groupe[id_petit_groupe]
         for ind1 in petit_groupe:
