@@ -1,5 +1,6 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+from matplotlib.pyplot import legend
 from lirexcel import lirexcel
 from random import random
 
@@ -98,6 +99,8 @@ def new_aff(N, P, tab, ind, m):
     textes = [[None for j in range(P)] for i in range(N)]
     couleurs = [[None for j in range(P)] for i in range(N)]
 
+    legendes = []
+
     for i in range(N):
         for j in range(P):
             if i == 11:
@@ -144,15 +147,14 @@ def new_aff(N, P, tab, ind, m):
                         canvas.delete(places[i + 1][j + 1])
                         canvas.delete(places[i + 2][j + 1])
                         canvas.delete(places[i + 3][j + 1])
-                        canvas.delete(places[i][j + 2])
-                        canvas.delete(places[i + 1][j + 2])
-                        canvas.delete(places[i + 2][j + 2])
-                        canvas.delete(places[i + 3][j + 2])
+                        canvas.delete(places[i][j - 1])
+                        canvas.delete(places[i + 1][j -1])
+                        canvas.delete(places[i + 2][j - 1])
+                        canvas.delete(places[i + 3][j - 1])
 
-                        canvas.coords(places[i][j], x - 15, y - 15, x - 15 + 4 * 30 + 3 * 10, y - 15 + 3 * 30 + 2 * 10)
+                        canvas.coords(places[i][j], x - 15, y - 15 - 10 - 30, x - 15 + 4 * 30 + 3 * 10, y - 15 - 10 - 30 + 3 * 30 + 2 * 10)
 
                         x += 15 + 10 + 30 + 5
-                        y += 15 + 10 + 15
 
                     x_barycentre += x * ind[k].masse
                     y_barycentre += y * ind[k].masse
@@ -167,7 +169,7 @@ def new_aff(N, P, tab, ind, m):
 
 
     # Barycentre
-    zone_barycentre = canvas.create_rectangle(10 + 12 * (30 + 10), 3 * (30 + 10), 10 + 16 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
+    zone_barycentre = canvas.create_rectangle(10 + 13 * (30 + 10), 3 * (30 + 10), 10 + 17 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
     barycentre = canvas.create_rectangle(x_barycentre - 5, y_barycentre - 5, x_barycentre + 5, y_barycentre + 5, fill='#00FF00', width=0)
     canvas.itemconfig(zone_barycentre, state='hidden')
     canvas.itemconfig(barycentre, state='hidden')
@@ -199,10 +201,17 @@ def new_aff(N, P, tab, ind, m):
                             canvas.itemconfig(places[i][j], fill=couleurs[i][j])
                         else:
                             canvas.itemconfig(places[i][j], fill='#00A000')
+
+        for legende in legendes:
+                canvas.delete(legende)
+
         if etat_couleurs == 'occupees':
             etat_couleurs = 'base'
         else:
             etat_couleurs = 'occupees'
+
+            legendes.append(canvas.create_rectangle(10, 130, 10 + 30, 130 + 30, fill='#00A000', width=0))
+            legendes.append(canvas.create_text(100, 145, text='Place occupée', fill="#FFFFFF"))
 
     places_occupees_bouton = tk.Button(root, text='Places occupées', command=places_occupees_command)
     places_occupees_bouton.pack()
@@ -227,10 +236,29 @@ def new_aff(N, P, tab, ind, m):
                             canvas.itemconfig(places[i][j], fill='#A0A000')
                         else:
                             canvas.itemconfig(places[i][j], fill='#FF7F00')
+                            
+        for legende in legendes:
+                canvas.delete(legende)
+
         if etat_couleurs == 'categories':
             etat_couleurs = 'base'
         else:
             etat_couleurs = 'categories'
+
+            legendes.append(canvas.create_rectangle(10, 130, 10 + 30, 130 + 30, fill='#0095FF', width=0))
+            legendes.append(canvas.create_text(80, 145, text='Homme', fill="#FFFFFF"))
+
+            legendes.append(canvas.create_rectangle(120, 130, 120 + 30, 130 + 30, fill="#c800FF", width=0))
+            legendes.append(canvas.create_text(190, 145, text='Femme', fill="#FFFFFF"))
+
+            legendes.append(canvas.create_rectangle(230, 130, 230 + 30, 130 + 30, fill="#FF7F00", width=0))
+            legendes.append(canvas.create_text(300, 145, text="Enfant", fill="#FFFFFF"))
+
+            legendes.append(canvas.create_rectangle(340, 130, 340 + 30, 130 + 30, fill="#00A000", width=0))
+            legendes.append(canvas.create_text(410, 145, text="Chaise roulante", fill="#FFFFFF"))
+
+            legendes.append(canvas.create_rectangle(450, 130, 450 + 30, 130 + 30, fill="#A0A000", width=0))
+            legendes.append(canvas.create_text(520, 145, text="Civière", fill="#FFFFFF"))
 
     categories_bouton = tk.Button(root, text='Catégories de personnes', command=categories_command)
     categories_bouton.pack()
@@ -249,10 +277,17 @@ def new_aff(N, P, tab, ind, m):
                             canvas.itemconfig(places[i][j], fill='#000000')
                         else :
                             canvas.itemconfig(places[i][j], fill='#00A000')
+
+        for legende in legendes:
+            canvas.delete(legende)
+
         if etat_couleurs == 'transit':
             etat_couleurs = 'base'
         else:
             etat_couleurs = 'transit'
+
+            legendes.append(canvas.create_rectangle(10, 130, 10 + 30, 130 + 30, fill='#00A000', width=0))
+            legendes.append(canvas.create_text(130, 145, text='Transit inférieur à 90 minutes', fill="#FFFFFF"))
 
     transit_bouton = tk.Button(root, text='Transit', command=transit_command)
     transit_bouton.pack()
@@ -272,10 +307,21 @@ def new_aff(N, P, tab, ind, m):
                         else:
                             canvas.itemconfig(places[i][j], fill='#FF00FF')
         
+        for legende in legendes:
+            canvas.delete(legende)
+
         if etat_couleurs == 'billets':
             etat_couleurs = 'base'
         else:
             etat_couleurs = 'billets'
+
+            legendes.append(canvas.create_rectangle(10, 130, 10 + 30, 130 + 30, fill='#FF00FF', width=0))
+            legendes.append(canvas.create_text(100, 145, text='Billet business', fill="#FFFFFF"))
+
+            legendes.append(canvas.create_rectangle(160, 130, 160 + 30, 130 + 30, fill='#0095FF', width=0))
+            legendes.append(canvas.create_text(250, 145, text='Billet standard', fill="#FFFFFF"))
+
+
     
     billets_bouton = tk.Button(root, text='Billets', command=billets_command)
     billets_bouton.pack()
