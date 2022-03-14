@@ -170,7 +170,7 @@ def new_aff(N, P, tab, ind, m):
 
 
     # Barycentre
-    zone_barycentre = canvas.create_rectangle(10 + 12 * (30 + 10), 3 * (30 + 10), 10 + 16 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
+    zone_barycentre = canvas.create_rectangle(10 + 13 * (30 + 10), 3 * (30 + 10), 10 + 17 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
     barycentre = canvas.create_rectangle(x_barycentre - 5, y_barycentre - 5, x_barycentre + 5, y_barycentre + 5, fill='#00FF00', width=0)
     canvas.itemconfig(zone_barycentre, state='hidden')
     canvas.itemconfig(barycentre, state='hidden')
