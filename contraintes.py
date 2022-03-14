@@ -161,10 +161,10 @@ def lutte_des_classes(model, X, ind):
     for k in range(K):
         if ind[k].classe == 1:
             model.addConstr(taille_bourgeois -
-                            sum([sum([i*X[i, j, k] for i in range(N)]) for j in range(P)]) >= 0)
+                            sum([sum([i*X[i, j, k] for i in range(N)]) for j in range(P)]) >= 0.1)
             model.addConstr(sum([X[i, 1, k]+X[i, 4, k] for i in range(N)]) == 0)
         else:
-            model.addConstr(taille_bourgeois-sum([sum([i*X[i,j,k] for i in range(N)]) for j in range(P)])<=-0.1)
+            model.addConstr(taille_bourgeois-sum([sum([i*X[i,j,k] for i in range(N)]) for j in range(P)])<=0)
     return taille_bourgeois
             
 def enfant_issue_secours(model, X, ind):
