@@ -147,15 +147,14 @@ def new_aff(N, P, tab, ind, m):
                         canvas.delete(places[i + 1][j + 1])
                         canvas.delete(places[i + 2][j + 1])
                         canvas.delete(places[i + 3][j + 1])
-                        canvas.delete(places[i][j + 2])
-                        canvas.delete(places[i + 1][j + 2])
-                        canvas.delete(places[i + 2][j + 2])
-                        canvas.delete(places[i + 3][j + 2])
+                        canvas.delete(places[i][j - 1])
+                        canvas.delete(places[i + 1][j -1])
+                        canvas.delete(places[i + 2][j - 1])
+                        canvas.delete(places[i + 3][j - 1])
 
-                        canvas.coords(places[i][j], x - 15, y - 15, x - 15 + 4 * 30 + 3 * 10, y - 15 + 3 * 30 + 2 * 10)
+                        canvas.coords(places[i][j], x - 15, y - 15 - 10 - 30, x - 15 + 4 * 30 + 3 * 10, y - 15 - 10 - 30 + 3 * 30 + 2 * 10)
 
                         x += 15 + 10 + 30 + 5
-                        y += 15 + 10 + 15
 
                     x_barycentre += x * ind[k].masse
                     y_barycentre += y * ind[k].masse
@@ -170,7 +169,7 @@ def new_aff(N, P, tab, ind, m):
 
 
     # Barycentre
-    zone_barycentre = canvas.create_rectangle(10 + 12 * (30 + 10), 3 * (30 + 10), 10 + 16 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
+    zone_barycentre = canvas.create_rectangle(10 + 13 * (30 + 10), 3 * (30 + 10), 10 + 17 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
     barycentre = canvas.create_rectangle(x_barycentre - 5, y_barycentre - 5, x_barycentre + 5, y_barycentre + 5, fill='#00FF00', width=0)
     canvas.itemconfig(zone_barycentre, state='hidden')
     canvas.itemconfig(barycentre, state='hidden')
