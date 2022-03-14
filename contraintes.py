@@ -2,14 +2,18 @@ import numpy as np
 from gurobipy import *
 
 
-def barycentre(m, X, ind, N, P, K):
+def barycentre(m, X, ind, N, P, K, avion = "A320"):
     """
     Calcule le barycentre et le contraint à rester dans une zone donnée.
     """
     max_bar_j = 4
-    max_bar_i = 17
     min_bar_j = 2
-    min_bar_i = 13
+    if avion == "A320":
+        max_bar_i = 17
+        min_bar_i = 13
+    if avion == "A321":
+        max_bar_i = 20.5
+        min_bar_i = 16.5
 
     bar = [0, 0]
     mtot = 0
