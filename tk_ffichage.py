@@ -2,7 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from matplotlib.pyplot import legend
 from lirexcel import lirexcel
-from random import random
+from random import *
 
 
 def nombre2hexa(n):
@@ -238,6 +238,59 @@ def new_aff(N, P, tab, ind, m):
 
     places_occupees_bouton = tk.Button(root, text='Places occupées', command=places_occupees_command)
     places_occupees_bouton.pack()
+
+    ######################################
+
+    # Pour colorer les groupes de différentes couleurs
+
+    def gencolor():
+        L_id_grp = []
+        for k in range(K):
+            if not (ind[k].idgroupe in L_id_grp):
+                L_id_grp.append(ind[k].idgroupe)
+        L_color = []
+        rndHex = '0123456789ABCDEF'
+        for g in range(len(L_id_grp)):
+            hexChar = ''
+            for i in range(6):
+                hexChar = hexChar+str(rndHex[randint(0, 15)])
+            L_color.append(str(hexChar))
+        return(L_color)
+
+    # Affichage de tous les groupes
+    def all_groupes_command():
+        global etat_couleurs
+
+        L = gencolor()
+
+        for k in range(K):
+            for i in range(len(tab)):
+                for j in range(len(tab[0])):
+                    if tab[i, j, k] == 1:
+                        if etat_couleurs == 'groupes_couleur':
+                            canvas.itemconfig(places[i][j], fill=couleurs[i][j])
+                        else:
+                            if len(ind[k].groupe) > 0:
+                                canvas.itemconfig(places[i][j], fill='#'+str(L[ind[k].idgroupe - 1]))
+                            else:
+                                canvas.itemconfig(places[i][j], fill='#00008b')
+
+        for legende in legendes:
+            canvas.delete(legende)
+
+        if etat_couleurs == 'groupes_couleur':
+            etat_couleurs = 'base'
+        else:
+            etat_couleurs = 'groupes_couleur'
+
+            # legendes.append(canvas.create_rectangle(
+            #    10, 130, 10 + 30, 130 + 30, fill='#00A000', width=0))
+            # legendes.append(canvas.create_text(100, 145, text='Place occupée', fill="#FFFFFF"))
+
+    all_groupes_bouton = tk.Button(root, text='Tous les groupes', command=all_groupes_command)
+    all_groupes_bouton.pack()
+
+    ######################################
 
     # Catégories de passagers
     def categories_command():
