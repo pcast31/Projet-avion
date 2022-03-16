@@ -87,6 +87,12 @@ def new_aff(N, P, tab, ind, m):
     root = tk.Tk()
     root.title('Navion')
 
+    bebe = ImageTk.PhotoImage(Image.open("data/crying_baby.png"))
+    luigo = ImageTk.PhotoImage(Image.open("data/luigo.png"))
+    elizamerch = ImageTk.PhotoImage(Image.open("data/elizamerch.png"))
+    cx = ImageTk.PhotoImage(Image.open("data/cx.png"))
+    allez_le_foot = ImageTk.PhotoImage(Image.open("data/allez_le_foot.png"))
+
     # Canvas
     canvas = tk.Canvas(root, width=N * 30 + (N + 1) * 10, height=290)
     canvas.pack()
@@ -98,6 +104,7 @@ def new_aff(N, P, tab, ind, m):
     places = [[None for j in range(P)] for i in range(N)]
     textes = [[None for j in range(P)] for i in range(N)]
     couleurs = [[None for j in range(P)] for i in range(N)]
+    images = []
 
     legendes = []
 
@@ -181,6 +188,27 @@ def new_aff(N, P, tab, ind, m):
                     poids_total += ind[k].masse
                     textes[i][j] = canvas.create_text(x, y, text=str(ind[k].idgroupe), fill='#FFFFFF')
 
+                    if ind[k].categorie == 'E':
+                        images.append(canvas.create_image(x - 15, y - 15, anchor=tk.NW, image=bebe, state="hidden"))
+
+                    elif ind[k].categorie == 'H':
+                        images.append(canvas.create_image(x - 15, y - 15, anchor=tk.NW, image=luigo, state="hidden"))
+
+                    elif ind[k].categorie == 'F':
+                        images.append(canvas.create_image(x - 15, y - 15, anchor=tk.NW, image=elizamerch, state="hidden"))
+
+                    elif ind[k].categorie == 'B':
+                        if j < 3:
+                            images.append(canvas.create_image(x + 15 - 150, y + 15 - 110, anchor=tk.NW, image=allez_le_foot, state="hidden"))
+                        else:
+                            images.append(canvas.create_image(x + 15 - 150, y - 15, anchor=tk.NW, image=allez_le_foot, state="hidden"))
+
+                    else:
+                        if j < 3:
+                            images.append(canvas.create_image(x + 15 - 70, y + 15 - 70, anchor=tk.NW, image=cx, state="hidden"))
+                        else:
+                            images.append(canvas.create_image(x + 15 - 70, y - 15, anchor=tk.NW, image=cx, state="hidden"))
+
                     if ind[k].transit > 0 and ind[k].transit not in transits:
                         transits.append(ind[k].transit)
     x_barycentre = x_barycentre / poids_total
@@ -227,6 +255,9 @@ def new_aff(N, P, tab, ind, m):
 
         for legende in legendes:
                 canvas.delete(legende)
+
+        for image in images:
+            canvas.itemconfig(image, state='hidden')
 
         if etat_couleurs == 'occupees':
             etat_couleurs = 'base'
@@ -275,6 +306,9 @@ def new_aff(N, P, tab, ind, m):
                             else:
                                 canvas.itemconfig(places[i][j], fill='#00008b')
 
+        for image in images:
+            canvas.itemconfig(image, state='hidden')
+
         for legende in legendes:
             canvas.delete(legende)
 
@@ -296,45 +330,25 @@ def new_aff(N, P, tab, ind, m):
     def categories_command():
         global etat_couleurs
 
+        for image in images:
+            if etat_couleurs == 'enfer':
+                canvas.itemconfig(image, state='hidden')
+            else:
+                canvas.itemconfig(image, state='normal')
+
         for k in range(K):
             for i in range(len(tab)):
                 for j in range(len(tab[0])):
                     if tab[i, j, k] == 1:
-                        if etat_couleurs == 'categories':
-                            canvas.itemconfig(places[i][j], fill=couleurs[i][j])
-                        elif ind[k].categorie == 'H':
-                            canvas.itemconfig(places[i][j], fill='#0095FF')
-                        elif ind[k].categorie == 'F':
-                            canvas.itemconfig(places[i][j], fill='#c800FF')
-                        elif ind[k].categorie == 'R':
-                            canvas.itemconfig(places[i][j], fill='#00A000')
-                        elif ind[k].categorie == 'B':
-                            canvas.itemconfig(places[i][j], fill='#A0A000')
-                        else:
-                            canvas.itemconfig(places[i][j], fill='#FF7F00')
-                            
-        for legende in legendes:
-                canvas.delete(legende)
+                        canvas.itemconfig(places[i][j], fill=couleurs[i][j])
 
-        if etat_couleurs == 'categories':
+        for legende in legendes:
+            canvas.delete(legende)
+
+        if etat_couleurs == 'enfer':
             etat_couleurs = 'base'
         else:
-            etat_couleurs = 'categories'
-
-            legendes.append(canvas.create_rectangle(10, 130, 10 + 30, 130 + 30, fill='#0095FF', width=0))
-            legendes.append(canvas.create_text(80, 145, text='Homme', fill="#FFFFFF"))
-
-            legendes.append(canvas.create_rectangle(120, 130, 120 + 30, 130 + 30, fill="#c800FF", width=0))
-            legendes.append(canvas.create_text(190, 145, text='Femme', fill="#FFFFFF"))
-
-            legendes.append(canvas.create_rectangle(230, 130, 230 + 30, 130 + 30, fill="#FF7F00", width=0))
-            legendes.append(canvas.create_text(300, 145, text="Enfant", fill="#FFFFFF"))
-
-            legendes.append(canvas.create_rectangle(340, 130, 340 + 30, 130 + 30, fill="#00A000", width=0))
-            legendes.append(canvas.create_text(410, 145, text="Chaise roulante", fill="#FFFFFF"))
-
-            legendes.append(canvas.create_rectangle(450, 130, 450 + 30, 130 + 30, fill="#A0A000", width=0))
-            legendes.append(canvas.create_text(520, 145, text="Civière", fill="#FFFFFF"))
+            etat_couleurs = 'enfer'
 
     categories_bouton = tk.Button(root, text='Catégories de personnes', command=categories_command)
     categories_bouton.pack()
@@ -353,6 +367,9 @@ def new_aff(N, P, tab, ind, m):
                             canvas.itemconfig(places[i][j], fill='#000000')
                         else :
                             canvas.itemconfig(places[i][j], fill='#00A000')
+
+        for image in images:
+            canvas.itemconfig(image, state='hidden')
 
         for legende in legendes:
             canvas.delete(legende)
@@ -383,6 +400,9 @@ def new_aff(N, P, tab, ind, m):
                         else:
                             canvas.itemconfig(places[i][j], fill='#FF00FF')
         
+        for image in images:
+            canvas.itemconfig(image, state='hidden')
+
         for legende in legendes:
             canvas.delete(legende)
 
@@ -416,6 +436,9 @@ def new_aff(N, P, tab, ind, m):
                         else:
                             canvas.itemconfig(places[i][j], fill='#000000')
         
+        for image in images:
+            canvas.itemconfig(image, state='hidden')
+
         for legende in legendes:
             canvas.delete(legende)
 
@@ -425,6 +448,7 @@ def new_aff(N, P, tab, ind, m):
 
     groupes_spinbox = tk.Spinbox(root, from_=1, to=groupe_max, command=groupes_command)
     groupes_spinbox.pack()
+           
 
     # Main loop
     root.mainloop()
