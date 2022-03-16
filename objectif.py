@@ -128,15 +128,15 @@ def bonus_seul(model, X, ind, coef):
     bordure = coef[0]*sum([X[i,j,k] for k in range(K) for i in range(N) for j in [0,5] if len(lien[k]) == 0]) # Individus seuls
     milieu,milieu2 = 0,0
     if coef[1] > 0:
-        milieu = sum([coef[1]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2) for i in range(N) for j in [1] 
-                if len(lien[k]) > 0 and len(lien[k]) == 1 and lien[k][0] > k]) # Groupes, 1ère moitié des passagers
-        milieu2 = sum([coef[1]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2,K) for i in range(N) for j in [4] 
-                if len(lien[k]) > 0 and len(lien[k]) == 1 and lien[k][0] > k]) # Groupes, 2ème moitié des passagers
+        milieu = sum([coef[1]*X[i,j,k] + 1*X[i,j+1,lien[k][0]] + 1*X[i,j-1,lien[k][0]] for k in range(K//2) for i in range(N) for j in [1] 
+                if len(lien[k]) == 1 and lien[k][0] > k]) # Groupes, 1ère moitié des passagers
+        milieu2 = sum([coef[1]*X[i,j,k] + 1*X[i,j+1,lien[k][0]] + 1*X[i,j-1,lien[k][0]] for k in range(K//2,K) for i in range(N) for j in [4] 
+                if len(lien[k]) == 1 and lien[k][0] > k]) # Groupes, 2ème moitié des passagers
     if coef[2] > 0:
         milieu += sum([coef[2]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] + X[i,j+1,lien[k][1]] + X[i,j-1,lien[k][1]]  for k in range(K//2) for i in range(N) for j in [1] 
-                if len(lien[k]) > 0 and len(lien[k]) == 2 and lien[k][0] > k and lien[k][1]>k]) # Groupes, 1ère moitié des passagers
+                if len(lien[k]) == 2 and lien[k][0] > k and lien[k][1]>k]) # Groupes, 1ère moitié des passagers
         milieu2 += sum([coef[2]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]]+ X[i,j+1,lien[k][1]] + X[i,j-1,lien[k][1]] for k in range(K//2,K) for i in range(N) for j in [4] 
-                if len(lien[k]) > 0 and len(lien[k]) == 2 and lien[k][0] > k and lien[k][1]>k]) # Groupes, 2ème moitié des passagers
+                if len(lien[k]) == 2 and lien[k][0] > k and lien[k][1]>k]) # Groupes, 2ème moitié des passagers
     return  milieu + bordure + milieu2
 
 

@@ -145,7 +145,7 @@ def reduction(scenario,ind, chemin='DataSeating.xlsx'):
         petit_groupe=groupe[id_petit_groupe]
         for ind1 in petit_groupe:
                 for ind2 in petit_groupe:
-                    if ind1 != ind2:
+                    if ind1 != ind2 and not ind2 in ind1.groupe:
                         ind1.ajout_au_groupe(ind2)
 
     return l

@@ -1,3 +1,4 @@
+from individu import *
 from initialisation import initialise
 from gurobipy import *
 import numpy as np
@@ -17,7 +18,7 @@ scenario = 2
 if __name__ == '__main__':
     m=Model()
     ind=lirexcel2(scenario)
-    ind_reduit=reduction(scenario, ind)
+    ind_reduit= reduction(scenario, ind)
     K=len(ind)
     X=initialise(m,N,P,K)
     m.update()
@@ -30,10 +31,12 @@ if __name__ == '__main__':
     civieres(m, X, ind_reduit)
     nenfants(m,X,ind_reduit)
     taille=lutte_des_classes(m,X,ind_reduit)
-    fct_objectif(m, X, ind, [0.2,2,2])
+    nb_group = nb_groupes(ind)
+    print(nb_group)
+    fct_objectif(m, X, ind_reduit, [0,0,2], 1, 1)
     m.update()
     m.optimize()
     affiche_texte(X.x,ind,m)
     affiche_avion(X.x,ind,m)
     new_aff(N, P, X.x, ind, m)
-    print(taille.x)
+    
