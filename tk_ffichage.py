@@ -267,7 +267,7 @@ def new_aff(N, P, tab, ind, m):
             for i in range(len(tab)):
                 for j in range(len(tab[0])):
                     if tab[i, j, k] == 1:
-                        if etat_couleurs == 'occupees':
+                        if etat_couleurs == 'groupes_couleur':
                             canvas.itemconfig(places[i][j], fill=couleurs[i][j])
                         else:
                             if len(ind[k].groupe) > 0:
@@ -278,10 +278,10 @@ def new_aff(N, P, tab, ind, m):
         for legende in legendes:
             canvas.delete(legende)
 
-        if etat_couleurs == 'occupees':
+        if etat_couleurs == 'groupes_couleur':
             etat_couleurs = 'base'
         else:
-            etat_couleurs = 'occupees'
+            etat_couleurs = 'groupes_couleur'
 
             # legendes.append(canvas.create_rectangle(
             #    10, 130, 10 + 30, 130 + 30, fill='#00A000', width=0))
