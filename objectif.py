@@ -146,5 +146,8 @@ def bonus_seul(model, X, ind, coef):
 def fct_objectif(model, X, ind, coef = [0,2,2], a = 1, b = 1):
     """
     Récapitule les différents objectifs, avec les signes qui vont bien.
+    coef représente les bonus pour les groupes de 1, 2 et 3. 
+    a est le poids de la fonction bonus_groupe2
+    b est le poids des correspondances
     """
     model.setObjective(bonus_groupe2(model, X, ind, a) - correspondance(model, X, ind, b)-bonus_seul(model,X,ind,coef), GRB.MINIMIZE) #

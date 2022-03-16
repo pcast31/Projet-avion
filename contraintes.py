@@ -163,8 +163,8 @@ def civieres(model, X, ind):
 
 def lutte_des_classes(model, X, ind):
     """
-    ajoute les contraintes sur la classe business
-    taille_bourgeois est le nombre de rangée de siège affecté en classe business
+    Ajoute les contraintes sur la classe business.
+    taille_bourgeois est le nombre de rangée de siège affecté en classe business.
     """
     (N, P, K) = np.shape(X)
     taille_bourgeois = model.addVar(vtype=GRB.INTEGER, name="taille_business")

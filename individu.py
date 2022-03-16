@@ -17,6 +17,9 @@ class Individu:
         self.groupe.append(ind)
 
 def nb_groupes(ind):
+    """
+    Compte le nombre de groupe de taille 1,2 et 3. Inutile dans l'immédiat.
+    """
     lst = [0,0,0]
     for e in ind:
         if len(e.groupe) == 0:

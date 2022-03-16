@@ -1,6 +1,7 @@
 import pandas as pd
 from individu import Individu
 
+# Comme leurs noms l'indiquents, ces fonctions pertmettent de convertir une instance en une liste d'individus.
 
 def lirexcel(scenario, chemin='DataSeating.xlsx'):
     df = pd.read_excel(chemin, sheet_name=scenario)
