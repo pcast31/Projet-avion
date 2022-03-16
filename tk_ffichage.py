@@ -271,7 +271,7 @@ def new_aff(N, P, tab, ind, m):
                             canvas.itemconfig(places[i][j], fill=couleurs[i][j])
                         else:
                             if len(ind[k].groupe) > 0:
-                                canvas.itemconfig(places[i][j], fill='#'+str(L[ind[k].idgroupe]))
+                                canvas.itemconfig(places[i][j], fill='#'+str(L[ind[k].idgroupe - 1]))
                             else:
                                 canvas.itemconfig(places[i][j], fill='#00008b')
 
