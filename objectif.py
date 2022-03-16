@@ -126,25 +126,37 @@ def bonus_seul(model, X, ind, coef):
             if ind[l] in ind[k].groupe:    
                 lien[k].append(l) 
     bordure = coef[0]*sum([X[i,j,k] for k in range(K) for i in range(N) for j in [0,5] if len(lien[k]) == 0]) # Individus seuls
-
+    milieu,milieu2 = 0,0
     if coef[1] > 0:
         milieu = sum([coef[1]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2) for i in range(N) for j in [1] 
-                if len(lien[k]) > 0 and len(lien[k]) == 1 and lien[k][0] > k]) # Groupes, 1ère moitié des passagers
+                if len(lien[k]) == 1 and lien[k][0] > k]) # Groupes, 1ère moitié des passagers
         milieu2 = sum([coef[1]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2,K) for i in range(N) for j in [4] 
-                if len(lien[k]) > 0 and len(lien[k]) == 1 and lien[k][0] > k]) # Groupes, 2ème moitié des passagers
+                if len(lien[k]) == 1 and lien[k][0] > k]) # Groupes, 2ème moitié des passagers
     if coef[2] > 0:
-        milieu += sum([coef[2]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] + X[i,j+1,lien[k][1]] + X[i,j-1,lien[k][1]]  for k in range(K//2) for i in range(N) for j in [1] 
-                if len(lien[k]) > 0 and len(lien[k]) == 2 and lien[k][0] > k and lien[k][1]>k]) # Groupes, 1ère moitié des passagers
-        milieu2 += sum([coef[2]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]]+ X[i,j+1,lien[k][1]] + X[i,j-1,lien[k][1]] for k in range(K//2,K) for i in range(N) for j in [4] 
-                if len(lien[k]) > 0 and len(lien[k]) == 2 and lien[k][0] > k and lien[k][1]>k]) # Groupes, 2ème moitié des passagers
+        milieu += sum([coef[2]*X[i,j,k] + X[i,j-1,lien[k][0]] + X[i,j+1,lien[k][1]] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][1]] for k in range(K//2) for i in range(N) for j in [1] 
+                if len(lien[k]) == 2 and lien[k][0] > k and lien[k][1]>k]) # Groupes, 1ère moitié des passagers
+        milieu2 += sum([coef[2]*X[i,j,k] + X[i,j-1,lien[k][0]]+ X[i,j+1,lien[k][1]]+ X[i,j+1,lien[k][0]]+ X[i,j-1,lien[k][1]] for k in range(K//2,K) for i in range(N) for j in [4] 
+                if len(lien[k]) == 2 and lien[k][0] > k and lien[k][1]>k]) # Groupes, 2ème moitié des passagers
     return  milieu + bordure + milieu2
 
 
+def objectif_ligne(m,X_res,Xbis,ind,N,P,K):
+    score=0
+    lien = [[] for _ in range(K)] # On crée la liste des amis d'un individu donné
+    for k in range(K):
+        for l in range(K):
+            if ind[l] in ind[k].groupe:    
+                lien[k].append(l) 
+    for k in range(K):
+        for p in lien[k]:
+            if sum([i*X_res[i,j,k] for j in range(6) for i in range(N)])==sum([i*X_res[i,j,p] for j in range(6) for i in range(N)]):
+                score+=sum([abs(j1-j2)*Xbis[i,j1,k]*Xbis[i,j2,p] for j1 in range(P) for j2 in range(P) for i in range(N)])                
+    m.setObjective(score,GRB.MINIMIZE)
 
 
 
-def fct_objectif(model, X, ind, coef = [0,2,1], a = 1, b = 1):
+def fct_objectif(model, X, ind, coef = [0,1,1], a = 1, b = 1):
     """
     Récapitule les différents objectifs, avec les signes qui vont bien.
     """
-    model.setObjective(2*bonus_groupe2(model, X, ind, a) - correspondance(model, X, ind, b)-bonus_seul(model,X,ind,coef), GRB.MINIMIZE) #
+    model.setObjective(bonus_groupe2(model, X, ind, a) - correspondance(model, X, ind, b)-bonus_seul(model,X,ind,coef), GRB.MINIMIZE) #

@@ -131,30 +131,50 @@ def new_aff(N, P, tab, ind, m):
                     y = 10 + (j + j // 3) * (30 + 10) + 15
 
                     if ind[k].categorie == 'R':
-                        canvas.delete(places[i + 1][j])
-                        canvas.delete(places[i][j + 1])
-                        canvas.delete(places[i + 1][j + 1])
+                        if j < 3:
+                            canvas.delete(places[i - 1][j])
+                            canvas.delete(places[i][j - 1])
+                            canvas.delete(places[i - 1][j - 1])
 
-                        canvas.coords(places[i][j], x - 15, y - 15, x - 15 + 30 + 10 + 30, y - 15 + 30 + 10 + 30)
+                            canvas.coords(places[i][j], x - 15 - 10 - 30, y - 15 - 10 - 30, x + 15, y + 15)
 
-                        x += 15 + 5
-                        y += 15 + 5
+                        else:
+                            canvas.delete(places[i - 1][j])
+                            canvas.delete(places[i][j + 1])
+                            canvas.delete(places[i - 1][j + 1])
+
+                            canvas.coords(places[i][j], x - 15 - 10 - 30, y - 15, x + 15, y + 15 + 10 + 30)
+
                     elif ind[k].categorie == 'B':
-                        canvas.delete(places[i + 1][j])
-                        canvas.delete(places[i + 2][j])
-                        canvas.delete(places[i + 3][j])
-                        canvas.delete(places[i][j + 1])
-                        canvas.delete(places[i + 1][j + 1])
-                        canvas.delete(places[i + 2][j + 1])
-                        canvas.delete(places[i + 3][j + 1])
-                        canvas.delete(places[i][j - 1])
-                        canvas.delete(places[i + 1][j -1])
-                        canvas.delete(places[i + 2][j - 1])
-                        canvas.delete(places[i + 3][j - 1])
+                        if j < 3:
+                            canvas.delete(places[i - 1][j])
+                            canvas.delete(places[i - 2][j])
+                            canvas.delete(places[i - 3][j])
+                            canvas.delete(places[i][j - 1])
+                            canvas.delete(places[i - 1][j - 1])
+                            canvas.delete(places[i - 2][j - 1])
+                            canvas.delete(places[i - 3][j - 1])
+                            canvas.delete(places[i][j - 2])
+                            canvas.delete(places[i - 1][j - 2])
+                            canvas.delete(places[i - 2][j - 2])
+                            canvas.delete(places[i - 3][j - 2])
 
-                        canvas.coords(places[i][j], x - 15, y - 15 - 10 - 30, x - 15 + 4 * 30 + 3 * 10, y - 15 - 10 - 30 + 3 * 30 + 2 * 10)
+                            canvas.coords(places[i][j], x - 15 - 3 * (10 + 30), y - 15 - 2 * (10 + 30), x + 15, y + 15)
 
-                        x += 15 + 10 + 30 + 5
+                        else:
+                            canvas.delete(places[i - 1][j])
+                            canvas.delete(places[i - 2][j])
+                            canvas.delete(places[i - 3][j])
+                            canvas.delete(places[i][j + 1])
+                            canvas.delete(places[i - 1][j + 1])
+                            canvas.delete(places[i - 2][j + 1])
+                            canvas.delete(places[i - 3][j + 1])
+                            canvas.delete(places[i][j + 2])
+                            canvas.delete(places[i - 1][j + 2])
+                            canvas.delete(places[i - 2][j + 2])
+                            canvas.delete(places[i - 3][j + 2])
+
+                            canvas.coords(places[i][j], x - 15 - 3 * (10 + 30), y - 15, x + 15, y + 15 + 2 * (10 + 30))
 
                     x_barycentre += x * ind[k].masse
                     y_barycentre += y * ind[k].masse
@@ -169,7 +189,10 @@ def new_aff(N, P, tab, ind, m):
 
 
     # Barycentre
-    zone_barycentre = canvas.create_rectangle(10 + 13 * (30 + 10), 3 * (30 + 10), 10 + 17 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
+    if N == 30:
+        zone_barycentre = canvas.create_rectangle(10 + 13 * (30 + 10), 3 * (30 + 10), 10 + 17 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
+    else:
+        zone_barycentre = canvas.create_rectangle(10 + 16.5 * (30 + 10), 3 * (30 + 10), 10 + 20.5 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
     barycentre = canvas.create_rectangle(x_barycentre - 5, y_barycentre - 5, x_barycentre + 5, y_barycentre + 5, fill='#00FF00', width=0)
     canvas.itemconfig(zone_barycentre, state='hidden')
     canvas.itemconfig(barycentre, state='hidden')
@@ -339,6 +362,12 @@ def new_aff(N, P, tab, ind, m):
                             canvas.itemconfig(places[i][j], fill='#00A000')
                         else:
                             canvas.itemconfig(places[i][j], fill='#000000')
+        
+        for legende in legendes:
+            canvas.delete(legende)
+
+        legendes.append(canvas.create_rectangle(10, 130, 10 + 30, 130 + 30, fill='#00A000', width=0))
+        legendes.append(canvas.create_text(110, 145, text=f'Membre du groupe {int(groupes_spinbox.get())}', fill="#FFFFFF"))
 
 
     groupes_spinbox = tk.Spinbox(root, from_=1, to=groupe_max, command=groupes_command)

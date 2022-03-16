@@ -2,16 +2,16 @@ import numpy as np
 from gurobipy import *
 
 
-def barycentre(m, X, ind, N, P, K, avion = "A320"):
+def barycentre(m, X, ind, N, P, K):
     """
     Calcule le barycentre et le contraint à rester dans une zone donnée.
     """
     max_bar_j = 4
     min_bar_j = 2
-    if avion == "A320":
+    if N == 30 :
         max_bar_i = 17
         min_bar_i = 13
-    if avion == "A321":
+    if N == 35:
         max_bar_i = 20.5
         min_bar_i = 16.5
 
@@ -28,7 +28,13 @@ def barycentre(m, X, ind, N, P, K, avion = "A320"):
                     j0 += j*X[i, j, k]
                 else:
                     j0 += (j+1)*X[i, j, k]  # on compte la largeur du couloir
+        bar[0] += ind[k].masse*i0
+        bar[1] += ind[k].masse*j0
+        mtot += ind[k].masse
 
+        #Le code suivant permet de compter le barycentre 
+        #au centre des chaises roulantes/brancards
+        """
         if ind[k].categorie in ["H", "F", "E"]:
             bar[0] += ind[k].masse*i0
             bar[1] += ind[k].masse*j0
@@ -40,7 +46,7 @@ def barycentre(m, X, ind, N, P, K, avion = "A320"):
         else:
             bar[0] += ind[k].masse*(i0 + 3/2)
             bar[1] += ind[k].masse*(j0 + 1)
-            mtot += ind[k].masse
+            mtot += ind[k].masse"""
     bar[0] /= mtot
     bar[1] /= mtot
 
@@ -51,6 +57,12 @@ def barycentre(m, X, ind, N, P, K, avion = "A320"):
 
     return C1, C2, C3, C4
 
+def ligne(m,X,Xf,N,P,K):
+    for k in range(K):
+        for p in range(K):
+            for i in range(N):
+                if sum([X[i,j,k] for j in range(6)])==sum([X[i,j,p] for j in range(6)]):
+                    m.addConstr(sum([Xf[i,j,k] for j in range(6)])==sum([Xf[i,j,p] for j in range(6)]))
 
 def unicite_personne(m, X, N, P, K):
     """
@@ -126,13 +138,13 @@ def chaises_roulantes(model, X, ind):
     (N, P, K) = np.shape(X)
     for k in range(K):
         if ind[k].categorie == "R":
-            model.addConstr(sum([X[i, 3, k] + X[i, 1, k] for i in range(N)]) == 1)
-            model.addConstr(sum([X[N-1, j, k] for j in range(P)]) == 0)
-            for i in range(N-1):
+            model.addConstr(sum([X[i, 3, k] + X[i, 2, k] for i in range(N)]) == 1)
+            model.addConstr(sum([X[0, j, k] for j in range(P)]) == 0)
+            for i in range(1,N):
                 model.addConstr(4*X[i, 3, k] + sum([X[i, 4, l] for l in range(K)])
-                                + sum([X[i+1, 3, l] for l in range(K)]) + sum([X[i+1, 4, l] for l in range(K)]) <= 4)
-                model.addConstr(4*X[i, 1, k] + sum([X[i, 2, l] for l in range(K)])
-                                + sum([X[i+1, 1, l] for l in range(K)]) + sum([X[i+1, 2, l] for l in range(K)]) <= 4)
+                                + sum([X[i-1, 3, l] for l in range(K)]) + sum([X[i-1, 4, l] for l in range(K)]) <= 4)
+                model.addConstr(4*X[i, 2, k] + sum([X[i, 1, l] for l in range(K)])
+                                + sum([X[i-1, 1, l] for l in range(K)]) + sum([X[i-1, 2, l] for l in range(K)]) <= 4)
 
 def civieres(model, X, ind):
     """
@@ -141,19 +153,19 @@ def civieres(model, X, ind):
     (N, P, K) = np.shape(X)
     for k in range(K):
         if ind[k].categorie == "B":
-            model.addConstr(sum([X[i,3,k] + X[i,0,k] for i in range(N)]) == 1)
-            model.addConstr(sum([X[i,j,k] for i in range(N-4,N) for j in range(P)]) == 0)
-            for i in range(N-3):
+            model.addConstr(sum([X[i,3,k] + X[i,2,k] for i in range(N)]) == 1)
+            model.addConstr(sum([X[i,j,k] for i in range(3) for j in range(P)]) == 0)
+            for i in range(3,N):
                 model.addConstr(12*X[i,3,k] + sum([X[i,4,l] for l in range(K)])  
                 + sum([X[i,5,l] for l in range(K)]) 
-                + sum([X[i+a,3,l] for l in range(K) for a in range(1,4)]) 
-                + sum([X[i+a,4,l] for l in range(K) for a in range(1,4)])
-                + sum([X[i+a,5,l] for l in range(K) for a in range(1,4)]) <= 12)
-                model.addConstr(12*X[i,0,k] + sum([X[i,1,l] for l in range(K)])  
-                + sum([X[i,2,l] for l in range(K)]) 
-                + sum([X[i+a,0,l] for l in range(K) for a in range(1,4)]) 
-                + sum([X[i+a,1,l] for l in range(K) for a in range(1,4)])
-                + sum([X[i+a,2,l] for l in range(K) for a in range(1,4)]) <= 12)
+                + sum([X[i-a,3,l] for l in range(K) for a in range(1,4)]) 
+                + sum([X[i-a,4,l] for l in range(K) for a in range(1,4)])
+                + sum([X[i-a,5,l] for l in range(K) for a in range(1,4)]) <= 12)
+                model.addConstr(12*X[i,2,k] + sum([X[i,0,l] for l in range(K)])  
+                + sum([X[i,1,l] for l in range(K)]) 
+                + sum([X[i-a,0,l] for l in range(K) for a in range(1,4)]) 
+                + sum([X[i-a,1,l] for l in range(K) for a in range(1,4)])
+                + sum([X[i-a,2,l] for l in range(K) for a in range(1,4)]) <= 12)
 
 def lutte_des_classes(model, X, ind):
     """
