@@ -19,7 +19,7 @@ scenario = 5
 if __name__ == '__main__':
     m=Model()
     ind=lirexcel2(scenario)
-    ind_reduit= reduction(scenario, ind) # Scinde les groupes de 4 et plus en petits groupes
+    ind_reduit= ind #reduction(scenario, ind) # Scinde les groupes de 4 et plus en petits groupes
     K=len(ind)
     X=initialise(m,N,P,K)
     m.update()
