@@ -140,18 +140,6 @@ def bonus_seul(model, X, ind, coef):
     return  milieu + bordure + milieu2
 
 
-def objectif_ligne(m,X_res,Xbis,ind,N,P,K):
-    score=0
-    lien = [[] for _ in range(K)] # On crée la liste des amis d'un individu donné
-    for k in range(K):
-        for l in range(K):
-            if ind[l] in ind[k].groupe:    
-                lien[k].append(l) 
-    for k in range(K):
-        for p in lien[k]:
-            if sum([i*X_res[i,j,k] for j in range(6) for i in range(N)])==sum([i*X_res[i,j,p] for j in range(6) for i in range(N)]):
-                score+=sum([abs(j1-j2)*Xbis[i,j1,k]*Xbis[i,j2,p] for j1 in range(P) for j2 in range(P) for i in range(N)])                
-    m.setObjective(score,GRB.MINIMIZE)
 
 
 

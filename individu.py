@@ -16,5 +16,18 @@ class Individu:
     def ajout_au_groupe(self,ind):
         self.groupe.append(ind)
 
+def nb_groupes(ind):
+    """
+    Compte le nombre de groupe de taille 1,2 et 3. Inutile dans l'immédiat.
+    """
+    lst = [0,0,0]
+    for e in ind:
+        if len(e.groupe) == 0:
+            lst[0] += 1
+        elif len(e.groupe) == 1:
+            lst[1] += 1
+        elif len(e.groupe) == 2:
+            lst[2] += 1
+    return [lst[0],lst[1]/2,lst[2]/3]
 
 

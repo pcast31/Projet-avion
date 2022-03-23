@@ -4,10 +4,11 @@ Projet de placement de passagers dans un avion par Paul Castéras, Tom De Coninc
 Par CentraleSupélec en partenariat avec Air France KLM
 
 - affichage.py : affichage des résultats dans la console
+- comparaison.py : comparer la qualité de différentes solutions
 - contraintes.py : contraintes du modèle
 - individu.py : définition de la classe Individu
 - initialisation.py : définition des variables binaires
 - lirexcel.py : lecture des données de l'Excel
 - main.py : fichier à exécuter
-- objectif.py : définition del a fonction objectif
+- objectif.py : définition de la fonction objectif
 - tk_ffichage.py : affichage des résultats dans une fenêtre

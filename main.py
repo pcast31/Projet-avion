@@ -17,8 +17,7 @@ scenario = 2
 if __name__ == '__main__':
     m=Model()
     ind=lirexcel2(scenario)
-    ind_reduit=ind
-    #reduction(scenario, ind)
+    ind_reduit=reduction(scenario, ind)
     K=len(ind)
     X=initialise(m,N,P,K)
     m.update()
