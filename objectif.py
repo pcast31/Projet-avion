@@ -128,14 +128,14 @@ def bonus_seul(model, X, ind, coef):
     bordure = coef[0]*sum([X[i,j,k] for k in range(K) for i in range(N) for j in [0,5] if len(lien[k]) == 0]) # Individus seuls
     milieu,milieu2 = 0,0
     if coef[1] > 0:
-        milieu = sum([coef[1]*X[i,j,k] + 1*X[i,j+1,lien[k][0]] + 1*X[i,j-1,lien[k][0]] for k in range(K//2) for i in range(N) for j in [1] 
+        milieu = sum([coef[1]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2) for i in range(N) for j in [1] 
                 if len(lien[k]) == 1 and lien[k][0] > k]) # Groupes, 1ère moitié des passagers
-        milieu2 = sum([coef[1]*X[i,j,k] + 1*X[i,j+1,lien[k][0]] + 1*X[i,j-1,lien[k][0]] for k in range(K//2,K) for i in range(N) for j in [4] 
+        milieu2 = sum([coef[1]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] for k in range(K//2,K) for i in range(N) for j in [4] 
                 if len(lien[k]) == 1 and lien[k][0] > k]) # Groupes, 2ème moitié des passagers
     if coef[2] > 0:
-        milieu += sum([coef[2]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]] + X[i,j+1,lien[k][1]] + X[i,j-1,lien[k][1]]  for k in range(K//2) for i in range(N) for j in [1] 
+        milieu += sum([coef[2]*X[i,j,k] + X[i,j-1,lien[k][0]] + X[i,j+1,lien[k][1]] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][1]] for k in range(K//2) for i in range(N) for j in [1] 
                 if len(lien[k]) == 2 and lien[k][0] > k and lien[k][1]>k]) # Groupes, 1ère moitié des passagers
-        milieu2 += sum([coef[2]*X[i,j,k] + X[i,j+1,lien[k][0]] + X[i,j-1,lien[k][0]]+ X[i,j+1,lien[k][1]] + X[i,j-1,lien[k][1]] for k in range(K//2,K) for i in range(N) for j in [4] 
+        milieu2 += sum([coef[2]*X[i,j,k] + X[i,j-1,lien[k][0]]+ X[i,j+1,lien[k][1]]+ X[i,j+1,lien[k][0]]+ X[i,j-1,lien[k][1]] for k in range(K//2,K) for i in range(N) for j in [4] 
                 if len(lien[k]) == 2 and lien[k][0] > k and lien[k][1]>k]) # Groupes, 2ème moitié des passagers
     return  milieu + bordure + milieu2
 
@@ -143,11 +143,8 @@ def bonus_seul(model, X, ind, coef):
 
 
 
-def fct_objectif(model, X, ind, coef = [0,2,2], a = 1, b = 1):
+def fct_objectif(model, X, ind, coef = [0,1,1], a = 1, b = 1):
     """
     Récapitule les différents objectifs, avec les signes qui vont bien.
-    coef représente les bonus pour les groupes de 1, 2 et 3. 
-    a est le poids de la fonction bonus_groupe2
-    b est le poids des correspondances
     """
     model.setObjective(bonus_groupe2(model, X, ind, a) - correspondance(model, X, ind, b)-bonus_seul(model,X,ind,coef), GRB.MINIMIZE) #

@@ -57,6 +57,12 @@ def barycentre(m, X, ind, N, P, K):
 
     return C1, C2, C3, C4
 
+def ligne(m,X,Xf,N,P,K):
+    for k in range(K):
+        for p in range(K):
+            for i in range(N):
+                if sum([X[i,j,k] for j in range(6)])==sum([X[i,j,p] for j in range(6)]):
+                    m.addConstr(sum([Xf[i,j,k] for j in range(6)])==sum([Xf[i,j,p] for j in range(6)]))
 
 def unicite_personne(m, X, N, P, K):
     """

@@ -39,7 +39,7 @@ m.optimize()
 optimum = m.objVal
 lst_solutions = []
 a = 0
-while optimum == m.objVal and a < 3:     #not m.status == GRB.INFEASIBLE: 
+while optimum == m.objVal and a < 5:     #not m.status == GRB.INFEASIBLE: 
     a += 1
     sol = np.array([[[X[i,j,k].x == 1 for k in range(K)] for j in range(P)] for  i in range(N)])
     print(np.shape(sol))
