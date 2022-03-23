@@ -1,88 +1,62 @@
-from individu import *
-from contraintes import *
-from lirexcel import lirexcel2
-from objectif import *
-from affichage import *
-from tk_ffichage import new_aff
+from initialisation import initialise
 from gurobipy import *
-from initialisation import *
+import numpy as np
+from contraintes import *
+from objectif import *
+from lirexcel import lirexcel, lirexcel2, reduction
+from affichage import affiche_texte, affiche_avion
+from tk_ffichage import new_aff
 
-def barycentre2(x, ind):
-    N,P, K = x.shape
 
-    max_bar_j = 4
-    min_bar_j = 2
-    if N == 30 :
-        max_bar_i = 17
-        min_bar_i = 13
-    if N == 35:
-        max_bar_i = 20.5
-        min_bar_i = 16.5
+N = 30
+P = 6
+scenario = 7
 
-    bar = [0, 0]
-    mtot = 0
 
-    for k in range(K):
-        i0 = 0
-        j0 = 0
+
+m=Model()
+ind=lirexcel2(scenario)
+ind_reduit= reduction(scenario, ind) # Scinde les groupes de 4 et plus en petits groupes
+K=len(ind)
+X=initialise(m,N,P,K)
+m.update()
+barycentre(m,X,ind_reduit,N,P,K)
+unicite_personne(m,X,N,P,K)
+unicite_siege(m,X,N,P,K)
+chef_de_groupe(m, X, ind_reduit)
+#symetrie(m,X,ind,N,P,K)
+chaises_roulantes(m, X, ind_reduit)
+enfant_issue_secours(m, X ,ind_reduit)
+civieres(m, X, ind_reduit)
+nenfants(m,X,ind_reduit)
+taille=lutte_des_classes(m,X,ind_reduit)
+fct_objectif(m, X, ind_reduit, [0,0,2])
+m.update()
+m.optimize()
+new_aff(N, P, X.x, ind, m)
+
+(N,P,K) = np.shape(X)
+lien = [[] for _ in range(K)] # On crée la liste des amis d'un individu donné
+for k in range(K):
+    for l in range(K):
+        if ind_reduit[l] in ind_reduit[k].groupe:    
+            lien[k].append(l) 
+
+# On fixe tout le monde sauf les couples espacés sur une même rangée dont on fixe ladite rangée
+for k in range(K): 
+    if len(lien[k]) > 1:
         for i in range(N):
             for j in range(P):
-                i0 += i*x[i, j, k]
-                if j <= 2:
-                    j0 += j*x[i, j, k]
-                else:
-                    j0 += (j+1)*x[i, j, k]  # on compte la largeur du couloir
-        bar[0] += ind[k].masse*i0
-        bar[1] += ind[k].masse*j0
-        mtot += ind[k].masse
+                m.addConstr(X[i,j,k] == X[i,j,k].x)
+    elif len(lien[k]) > 0 and sum([i*X[i,j,k].x for i in range(N) for j in range(P)]) != sum([i*X[i,j,lien[k][0]].x for i in range(N) for j in range(P)]):
+        for i in range(N):
+            for j in range(P):
+                m.addConstr(X[i,j,k] == X[i,j,k].x)
+    else:
+        for i in range(N):    
+            m.addConstr(sum([X[i,j,k] for j in range(P)]) == sum(X[i,j,k].x for j in range(P)))
 
-    bar[0] /= mtot
-    bar[1] /= mtot
-
-    return (min_bar_i <= bar[0] <= max_bar_i) and (min_bar_j <= bar[1] <= max_bar_j) 
-
-def postprocessing(x, ind):
-    N,P,K = x.shape
-    carte = np.zeros(N, P)
-    placement = [(0, 0)]*K
-    lien = [[] for _ in range(K)] 
-    for k in range(K):
-        for l in range(K):
-            if ind[l] in ind[k].groupe:    
-                lien[k].append(l)
-
-    for i in range(N):
-        for j in range(P):
-            b = True
-            for k in range(k):
-                if x[i, j, k] == 1:
-                    carte[i,j] = k
-                    placement[k] = (i, j)
-                    b = False
-            if b:
-                carte[i, j] = -1
-    
-
-    for i in range(N):
-        liste_couple = []
-        places_ok = []
-        deja_vu = []
-        for j in range(P):
-            if carte[i, j] != -1:
-                groupe = ind[carte[i, j]].groupe
-                if len(groupe) == 1 and carte[i, j] not in deja_vu:
-                    deja_vu += [carte[i, j], groupe[0]]
-                    i1, j1 = placement[groupe[0]]
-                    if i1 == i and abs(j - j1) > 1:
-                        liste_couple += [(j, j1)]
-                elif len(groupe) == 0:
-                    places_ok += [j]
-            else:
-                places_ok += [j]
-        
-        
-        
-
-            
-
-
+m.setObjective(bonus_groupe3(m, X, ind_reduit), GRB.MINIMIZE) # bonus_groupe3 quadratique
+m.update()
+m.optimize()
+new_aff(N, P, X.x, ind, m)

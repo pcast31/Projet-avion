@@ -130,7 +130,6 @@ def chef_de_groupe(model, X, ind):
                                 <= sum([i*X[i, j, l] for i in range(N) for j in range(P)]))
                 #model.addConstr(sum([j*X[i,j,k] for j in range(P) for i in range(N)]) <= sum([j*X[i,j,l] for j in range(P) for i in range(N)]))
 
-
 def chaises_roulantes(model, X, ind):
     """
     S'assure que les chaises roulantes occupent un carré 2x2 le long de l'allée centrale.
@@ -187,9 +186,11 @@ def enfant_issue_secours(model, X, ind):
     """
     Impose aux enfants de ne pas se situer devant les issues de secours.
     """
-    if ind.categorie == 'E':
-        for j in range(1, 7):
-            model.addConstr(X[12, j, ind] == 0, name="C_enf_sec"+str(j))
+    (_,_,K) = X.shape
+    for k in range(K):    
+        if ind[k].categorie == 'E':
+            for j in range(1, 7):
+                model.addConstr(X[12, j-1, k] == 0, name="C_enf_sec"+str(j))
 
 def nenfants(model, X, ind):
     """
