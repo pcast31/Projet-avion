@@ -34,6 +34,8 @@ if __name__ == '__main__':
     m.update()
     m.optimize()
 
+
+
     affiche_texte(X.x,ind,m)
     affiche_avion(X.x,ind,m)
     new_aff(N, P, X.x, ind, m)
