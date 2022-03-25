@@ -1,13 +1,46 @@
 import tkinter as tk
 from random import randrange
+from initialisation import initialise
+from gurobipy import *
+import numpy as np
+from contraintes import *
+from objectif import *
+from lirexcel import lirexcel, lirexcel2, reduction
+from affichage import affiche_texte, affiche_avion
+from tk_ffichage import new_aff
 
 
-def dyna_ffichage(N, P, ind):
-    def calculer(K):
+
+N = 30
+P = 6
+scenario = 2
+
+
+
+def dyna_ffichage(N, P,K,tab, ind):
+    groupes={}
+    for indiv in ind:
+        if indiv.idgroupe not in groupes:
+            groupes[indiv.idgroupe]=[indiv]
+        else :
+            groupes[indiv.idgroupe].append(indiv)
+        
+    place_ind={}
+    for i in range(N):
+        for j in range(N):
+            if sum([k*tab[i][j][k] for k in range(K)])>0:
+                place_ind[sum([k*tab[i][j][k] for k in range(K)])]=(i,j)
+
+
+    def calculer(g):
         places = []
 
-        for k in range(3 * K):
-            places.append((randrange(0, N), randrange(0, P)))
+        if 'R' not in [individu.cat for individu in groupes[g]] and 'B' not in [individu.cat for individu in groupes[g]]:
+            return [place_ind[individu] for individu in groupes[g]]
+        
+        for gr in groupes:
+            if len(groupes[gr])==len(groupes[g]) and groupes[g][0].classe==groupes[gr][0].classe and 'R' not in [individu.cat for individu in groupes[gr]] and 'B' not in [individu.cat for individu in groupes[gr]]:
+                places.append([place_ind[individu] for individu in groupes[gr]])
 
         return places
 
@@ -21,10 +54,11 @@ def dyna_ffichage(N, P, ind):
     places = [[canvas.create_rectangle(10 + i * 40, 10 + (j + j // 3) * 40, 10 + i * 40 + 30, 10 + (j + j // 3) * 40 + 30, width=0, fill='#465582') for j in range(P)] for i in range(N)]
 
     tailles_groupes = [0] * ind[-1].idgroupe
+    ind_repr=[0]*ind[-1].idgroupe
     for i in ind:
         tailles_groupes[i.idgroupe - 1] = len(i.groupe) + 1
-
-    places_proposees = calculer(tailles_groupes[0])
+        ind_repr[i.idgroupe-1]=i
+    places_proposees = places_proposees = calculer(tailles_groupes[0])
     for i, j in places_proposees:
         canvas.itemconfig(places[i][j], fill='#FF0000')
 
@@ -121,4 +155,27 @@ def dyna_ffichage(N, P, ind):
 if __name__ == '__main__':
     from lirexcel import lirexcel2
 
-    dyna_ffichage(30, 6, lirexcel2(7))
+    m=Model()
+    ind=lirexcel2(scenario)
+    ind_reduit=reduction(scenario, ind)
+    K=len(ind)
+    X=initialise(m,N,P,K)
+    m.update()
+    barycentre(m,X,ind_reduit,N,P,K)
+    unicite_personne(m,X,N,P,K)
+    unicite_siege(m,X,N,P,K)
+    chef_de_groupe(m, X, ind_reduit)
+    #symetrie(m,X,ind,N,P,K)
+    chaises_roulantes(m, X, ind_reduit)
+    civieres(m, X, ind_reduit)
+    nenfants(m,X,ind_reduit)
+    taille=lutte_des_classes(m,X,ind_reduit)
+    fct_objectif(m, X, ind_reduit, [0,2,2])
+    m.update()
+    m.optimize()
+
+
+
+
+
+    dyna_ffichage(30, 6, lirexcel2(0))
