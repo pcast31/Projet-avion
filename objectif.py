@@ -112,6 +112,19 @@ def bonus_groupe2(model, X, ind, a):
             #group = group + 0.2*sum([sum([j*X[i,j,k] for j in range(P)]) - sum([j*X[i,j,lien[k][0]] for j in range(P)]) for i in range(N)])
     return a*group 
 
+def bonus_groupe3(model, X, ind):
+    """
+    Distance selon j entre deux membres d'un couple. Quadratique.
+    """
+    (N,P,K) = np.shape(X)
+    lien = [[] for _ in range(K)] # On crée la liste des amis d'un individu donné
+    for k in range(K):
+        for l in range(K):
+            if ind[l] in ind[k].groupe:    
+                lien[k].append(l) 
+    return sum([(sum([j*X[i,j,k] + (P//2 + j + 1)*X[i,P//2 + j,k] for j in range(P//2) for i in range(N)]) 
+            - sum([j*X[i,j,lien[k][0]] + (P//2 + j + 1)*X[i,P//2 + j,lien[k][0]]for j in range(P//2) for i in range(N)]))**2 for k in range(K)  if len(lien[k]) == 1])
+
 def bonus_seul(model, X, ind, coef):
     """
     On récompense le fait qu'un passager seul soit proche d'une fenêtre afin qu'il ne sépare pas un groupe.
