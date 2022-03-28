@@ -190,7 +190,7 @@ def enfant_issue_secours(model, X, ind):
     for k in range(K):    
         if ind[k].categorie == 'E':
             for j in range(1, 7):
-                model.addConstr(X[12, j-1, k] == 0, name="C_enf_sec"+str(j))
+                model.addConstr(X[11, j-1, k] == 0, name="C_enf_sec"+str(j))
 
 def nenfants(model, X, ind):
     """

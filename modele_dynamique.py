@@ -9,6 +9,8 @@ from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
 import threading
 
+# Avorton de modèle dynamique. On teste toutes les choix de place permettant de maintenir l'objectif.
+
 # Taille de l'avion. Une des instance nécessite d'augmenter N
 N = 30
 P = 6

@@ -13,7 +13,6 @@ N = 30
 P = 6
 scenario = 0
 
-
 def choix_possible(k,X_taille,X_inter,taille,place_associe):
     place_possible=[]
     groupe=[ind[k]]+ind[k].groupe

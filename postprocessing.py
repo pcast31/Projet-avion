@@ -7,12 +7,14 @@ from lirexcel import lirexcel, lirexcel2, reduction
 from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
 
-
+# Dimensions de l'avion
 N = 30
 P = 6
-scenario = 7
+# Instance
+scenario = 4
 
-
+# Ici, on détermine une solution sans chercher à placer les couples à côté pour alléger les calculs.
+# On ré-optimise ensuite en fixant les groupes déjà bien placés.
 
 m=Model()
 ind=lirexcel2(scenario)
