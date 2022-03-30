@@ -12,8 +12,8 @@ def barycentre(m, X, ind, N, P, K):
         max_bar_i = 17
         min_bar_i = 13
     if N == 35:
-        max_bar_i = 20.5
-        min_bar_i = 16.5
+        max_bar_i = 20
+        min_bar_i = 16
 
     bar = [0, 0]
     mtot = 0
