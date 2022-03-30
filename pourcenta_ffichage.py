@@ -12,7 +12,6 @@ from objectif import *
 from lirexcel import lirexcel, lirexcel2, reduction
 from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
-import time
 
 def main():
     # Dimensions de l'avion
@@ -70,6 +69,8 @@ bar.pack()
 def lezgongue_command():
     global t
 
+    lezgongue['state'] = 'disabled'
+
     bar['value'] = 100
     lab['text'] = '༼ つ ◕_◕ ༽つ'
 
@@ -82,10 +83,17 @@ def lezgongue_command():
         def write(self, s):
             global f
             if '%' in s and f != 0:
-                m = re.search(r'\d*.?\d+%', s)
-                f = float(m.group(0)[:-1])
-                bar['value'] = f
+                m = re.search(r'\d*\.?\d+(?=%)', s)
+                lf = float(m.group(0))
+                bar['value'] = lf
                 lab['text'] = '༼ つ >_< ༽つ'
+
+                
+                m = re.search(r'-?\d*\.?\d+(?=\s+-?\d*\.?\d+\s+\d*\.?\d+%)', s)
+                if m is not None:
+                    score['text'] = f'Score : {float(m.group(0))}'
+
+                f = lf
             
             base_stdout.write(s)
 
@@ -109,6 +117,9 @@ def lezgongue_command():
 
 lezgongue = tk.Button(root, text='Lezgongue', command=lezgongue_command)
 lezgongue.pack()
+
+score = tk.Label(root, text='Score : 0')
+score.pack()
 
 def task():
     global f
