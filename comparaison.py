@@ -73,3 +73,39 @@ def barycentre2(x, ind):
     bar[1] /= mtot
 
     return (min_bar_i <= bar[0] <= max_bar_i) and (min_bar_j <= bar[1] <= max_bar_j) 
+
+def verif_enfants(X, ind, b = False):
+    """
+    Permet de vérifier qu'une solution non-générée par Gurobi satisfait les contraintes sur les enfants.
+    """
+    (N,P,K) = X.shape
+    pop = [0,0]
+    for k in range(K):
+        if ind[k].categorie in ['H', 'F']:
+            pop[0] += 1
+        elif ind[k].categorie == 'E':
+            pop[1] += 1
+    enfants_seuls = 0
+    if b and pop[1] <= pop[0]: # On choisit d'abandonner la contrainte si il y a plus d'enfants que d'adultes.
+        for i in range(N):
+            enfants_seuls += min(sum([ind[k].age*X[i,j,k] for j in range(P-2,P) for k in range(K)]), 0)
+            enfants_seuls += min(sum([ind[k].age*X[i,j,k] for j in range(P-3,P-1) for k in range(K)]), 0)
+            enfants_seuls += min(sum([ind[k].age*X[i,j,k] for j in range(2) for k in range(K)]), 0)
+            enfants_seuls += min(sum([ind[k].age*X[i,j,k] for j in range(1,3) for k in range(K)]), 0)
+    elif not b and pop[1] <= pop[0]:    
+        for i in range(N):
+            enfants_seuls += min(sum([ind[k].age*X[i,j,k] for j in range(3,P) for k in range(K)]), 0)
+            enfants_seuls += min(sum([ind[k].age*X[i,j,k] for j in range(3) for k in range(K)]), 0)
+    elif pop[1] <= 9*pop[0]:
+        for i in range(0, N, 3):
+            enfants_seuls += min(sum([ind[k].age**3 * X[x,j,k] for j in range(3) for x in [i,i+1,i+2] for k in range(K)]), 0)
+            enfants_seuls += min(sum([ind[k].age**3 * X[x,j,k] for j in range(3,P) for x in [i,i+1,i+2] for k in range(K)]), 0)
+    else:
+        print("Trop d'enfants, contraintes correspondantes ignorées.")
+
+    issues = (sum([X[11,j,k] for j in range(6) for k in range(K) if ind[k].categorie == 'E']) == 0)
+    if issues:
+        print("Pas d'enfants sur les issues de secours.") 
+    else:
+        print("Il y a des enfants sur les issues de secours !")
+    print(f'Il y a {enfants_seuls} enfants seuls.')

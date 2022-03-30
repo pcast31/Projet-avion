@@ -13,14 +13,32 @@ P = 6
 # Instance
 scenario = 1
 
-
-
+def dimension(ind):
+    """
+    Indique le nombre de places minimal pour une instance donnée.
+    """
+    nb = 0
+    buis = 1
+    for e in ind:
+        if e.categorie == 'R':
+            e += 4
+        elif e.categorie == 'B':
+            e += 12
+        else:
+            e += 1
+        if e.classe == 1:
+            buis += 1
+    return nb + buis//2
 
 # Ici, on détermine une solution sans chercher à placer les couples à côté pour alléger les calculs.
 # On ré-optimise ensuite en fixant les groupes déjà bien placés.
 
 m=Model()
 ind=lirexcel2(scenario)
+
+if dimension(ind) > 180:
+    N = 35
+
 ind_reduit= reduction(scenario, ind) # Scinde les groupes de 4 et plus en petits groupes
 K=len(ind)
 X=initialise(m,N,P,K)
