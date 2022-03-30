@@ -1,16 +1,56 @@
 import tkinter as tk
 from random import randrange
+from initialisation import initialise
+from gurobipy import *
+import numpy as np
+from contraintes import *
+from objectif import *
+from lirexcel import lirexcel, lirexcel2, reduction
+from affichage import affiche_texte, affiche_avion
+from tk_ffichage import new_aff
 
 
-def dyna_ffichage(N, P, ind):
-    def calculer(K):
+
+N = 30
+P = 6
+scenario = 0
+
+
+
+def dyna_ffichage(N, P,K,tab, ind):
+    
+    groupes={}
+    for indiv in ind:
+        if indiv.idgroupe not in groupes:
+            groupes[indiv.idgroupe]=[indiv]
+        else :
+            groupes[indiv.idgroupe].append(indiv)
+
+    place_ind={}
+    for i in range(N):
+        for j in range(P):
+            if sum([(k+1)*tab[i][j][k] for k in range(K)])>0:
+                print(sum([k*tab[i][j][k] for k in range(K)]))
+                place_ind[sum([k*tab[i][j][k] for k in range(K)])]=(i,j)
+
+
+    def calculer(g):
         places = []
 
-        for k in range(3 * K):
-            places.append((randrange(0, N), randrange(0, P)))
+        if 'R' in [individu.categorie for individu in groupes[g]] or 'B' in [individu.categorie for individu in groupes[g]]:
+            print("porbleme")
+            return [place_ind[individu.id] for individu in groupes[g]]
+        
+        for gr in groupes:
+            if len(groupes[gr])==len(groupes[g]) and groupes[g][0].classe==groupes[gr][0].classe and 'R' not in [individu.categorie for individu in groupes[gr]] and 'B' not in [individu.categorie for individu in groupes[gr]]:
+                print([individu.id for individu in groupes[gr]])
+                places.append([place_ind[individu.id] for individu in groupes[gr]])
+
+        print("coucou",places)
 
         return places
 
+    print(calculer(1))
     root = tk.Tk()
 
     canvas = tk.Canvas(root, width=30 * N + 10 * (N + 1), height=30 * (P + 1) + 10 * (P + 2))
@@ -21,9 +61,10 @@ def dyna_ffichage(N, P, ind):
     places = [[canvas.create_rectangle(10 + i * 40, 10 + (j + j // 3) * 40, 10 + i * 40 + 30, 10 + (j + j // 3) * 40 + 30, width=0, fill='#465582') for j in range(P)] for i in range(N)]
 
     tailles_groupes = [0] * ind[-1].idgroupe
+    ind_repr=[0]*ind[-1].idgroupe
     for i in ind:
         tailles_groupes[i.idgroupe - 1] = len(i.groupe) + 1
-
+        ind_repr[i.idgroupe-1]=i
     places_proposees = calculer(tailles_groupes[0])
     for i, j in places_proposees:
         canvas.itemconfig(places[i][j], fill='#FF0000')
@@ -53,7 +94,7 @@ def dyna_ffichage(N, P, ind):
 
             for i in range(N):
                 for j in range(P):
-                    if (i, j) in places_proposees:
+                    if (i, j) in [i for i in places for places in places_proposees]:
                         canvas.itemconfig(places[i][j], fill='#FF0000')
                     else:
                         canvas.itemconfig(places[i][j], fill='#465582')
@@ -121,4 +162,25 @@ def dyna_ffichage(N, P, ind):
 if __name__ == '__main__':
     from lirexcel import lirexcel2
 
-    dyna_ffichage(30, 6, lirexcel2(7))
+    m=Model()
+    ind=lirexcel2(scenario)
+    ind_reduit=reduction(scenario, ind)
+    K=len(ind)
+    X=initialise(m,N,P,K)
+    m.update()
+    barycentre(m,X,ind_reduit,N,P,K)
+    unicite_personne(m,X,N,P,K)
+    unicite_siege(m,X,N,P,K)
+    chef_de_groupe(m, X, ind_reduit)
+    #symetrie(m,X,ind,N,P,K)
+    chaises_roulantes(m, X, ind_reduit)
+    civieres(m, X, ind_reduit)
+    nenfants(m,X,ind_reduit)
+    taille=lutte_des_classes(m,X,ind_reduit)
+    fct_objectif(m, X, ind_reduit, [0,2,2])
+    m.update()
+    m.optimize()
+    tab=X.x
+
+
+    dyna_ffichage(30, 6, K, X.x, ind_reduit)
