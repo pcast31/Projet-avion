@@ -18,6 +18,7 @@ scenario = 2
 
 
 def dyna_ffichage(N, P,K,tab, ind):
+    
     groupes={}
     for indiv in ind:
         if indiv.idgroupe not in groupes:
@@ -87,7 +88,7 @@ def dyna_ffichage(N, P,K,tab, ind):
 
             for i in range(N):
                 for j in range(P):
-                    if (i, j) in places_proposees:
+                    if (i, j) in [i for i in places for places in places_proposees]:
                         canvas.itemconfig(places[i][j], fill='#FF0000')
                     else:
                         canvas.itemconfig(places[i][j], fill='#465582')
