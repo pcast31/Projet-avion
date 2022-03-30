@@ -197,6 +197,8 @@ def nenfants(model, X, ind, b = False):
     Garantie que les nenfants ne soient pas seuls ༼ つ ◕_◕ ༽つ  o(一︿一+)o
     Par défaut, on veut un adulte sur une demie-rangée s'il y a un enfant.
     Si b, on impose que l'adulte soit immédiatement à côté du mioche.
+    S'il y a trop d'enfants, on se contente de placer un adulte sur un carré 3*3.
+    S'il y en a vraiment trop, on ne fait rien.
     """
     (N,P,K) = np.shape(X)
     pop = [0,0]
@@ -215,7 +217,9 @@ def nenfants(model, X, ind, b = False):
         for i in range(N):
             model.addConstr(sum([ind[k].age*X[i,j,k] for j in range(3,P) for k in range(K)]) >= 0)
             model.addConstr(sum([ind[k].age*X[i,j,k] for j in range(3) for k in range(K)]) >= 0)
-    else:
+    elif pop[1] <= 9*pop[0]:
         for i in range(0, N, 3):
-            model.addConstr(sum([ind[k].age*X[x,j,k] for j in range(3) for x in [i,i+1,i+2] for k in range(K)]) >= 0)
-            model.addConstr(sum([ind[k].age*X[x,j,k] for j in range(3,P) for x in [i,i+1,i+2] for k in range(K)]) >= 0)
+            model.addConstr(sum([ind[k].age**3 * X[x,j,k] for j in range(3) for x in [i,i+1,i+2] for k in range(K)]) >= 0)
+            model.addConstr(sum([ind[k].age**3 * X[x,j,k] for j in range(3,P) for x in [i,i+1,i+2] for k in range(K)]) >= 0)
+    else:
+        print("Trop d'enfants, contraintes correspondantes ignorées.")

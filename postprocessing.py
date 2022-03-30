@@ -8,10 +8,13 @@ from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
 
 # Dimensions de l'avion
-N = 35
+N = 30
 P = 6
 # Instance
-scenario = 6
+scenario = 1
+
+
+
 
 # Ici, on détermine une solution sans chercher à placer les couples à côté pour alléger les calculs.
 # On ré-optimise ensuite en fixant les groupes déjà bien placés.
@@ -32,7 +35,7 @@ enfant_issue_secours(m, X ,ind_reduit)
 civieres(m, X, ind_reduit)
 nenfants(m,X,ind_reduit)
 taille=lutte_des_classes(m,X,ind_reduit)
-fct_objectif(m, X, ind_reduit, [0,0,0])
+fct_objectif(m, X, ind_reduit, [0,0,2])
 m.update()
 m.optimize()
 new_aff(N, P, X.x, ind, m)
@@ -71,8 +74,8 @@ def post_traitement(m, X, ind, lst = [False, False, True]):
             for i in range(N):    
                 m.addConstr(sum([X[i,j,k] for j in range(P)]) == sum(X[i,j,k].x for j in range(P)))
 
-post_traitement(m, X, ind_reduit, [False, False, False])
-m.setObjective(bonus_groupe3(m, X, ind_reduit, [True, True]), GRB.MINIMIZE) # bonus_groupe3 quadratique
+post_traitement(m, X, ind_reduit, [False, False, True])
+m.setObjective(bonus_groupe3(m, X, ind_reduit, [True, False]), GRB.MINIMIZE) # bonus_groupe3 quadratique
 m.update()
 m.optimize()
 new_aff(N, P, X.x, ind, m)
