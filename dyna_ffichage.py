@@ -8,7 +8,7 @@ from objectif import *
 from lirexcel import lirexcel, lirexcel2, reduction
 from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
-from postprocessing import post_traitement
+from postprocessing import post_traitement,dimension
 
 
 N = 30

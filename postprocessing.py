@@ -33,33 +33,11 @@ def dimension(ind):
 # Ici, on détermine une solution sans chercher à placer les couples à côté pour alléger les calculs.
 # On ré-optimise ensuite en fixant les groupes déjà bien placés.
 
-<<<<<<< HEAD
-# m=Model()
-# ind=lirexcel2(scenario)
-# ind_reduit= reduction(scenario, ind) # Scinde les groupes de 4 et plus en petits groupes
-# K=len(ind)
-# X=initialise(m,N,P,K)
-# m.update()
-# barycentre(m,X,ind_reduit,N,P,K)
-# unicite_personne(m,X,N,P,K)
-# unicite_siege(m,X,N,P,K)
-# chef_de_groupe(m, X, ind_reduit)
-# symetrie(m,X,ind,N,P,K)
-# chaises_roulantes(m, X, ind_reduit)
-# enfant_issue_secours(m, X ,ind_reduit)
-# civieres(m, X, ind_reduit)
-# nenfants(m,X,ind_reduit)
-# taille=lutte_des_classes(m,X,ind_reduit)
-# fct_objectif(m, X, ind_reduit, [0,0,2])
-# m.update()
-# m.optimize()
-# new_aff(N, P, X.x, ind, m)
-=======
 m=Model()
 ind=lirexcel2(scenario)
 
-if dimension(ind) > 180:
-    N = 35
+#if dimension(ind) > 180:
+#    N = 35
 
 ind_reduit= reduction(scenario, ind) # Scinde les groupes de 4 et plus en petits groupes
 K=len(ind)
@@ -79,7 +57,6 @@ fct_objectif(m, X, ind_reduit, [0,0,2])
 m.update()
 m.optimize()
 new_aff(N, P, X.x, ind, m)
->>>>>>> e2540e2a88bf0fab239c59cca474eb6037430494
 
 def post_traitement(m, X, ind, lst = [False, False, True]):
     (N,P,K) = np.shape(X)
