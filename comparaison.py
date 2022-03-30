@@ -40,3 +40,36 @@ def score(x, ind):
             s_transit += 1
     return s_groupe, s_transit
 
+def barycentre2(x, ind):
+    N,P, K = x.shape
+
+    max_bar_j = 4
+    min_bar_j = 2
+    if N == 30 :
+        max_bar_i = 17
+        min_bar_i = 13
+    if N == 35:
+        max_bar_i = 20
+        min_bar_i = 16
+
+    bar = [0, 0]
+    mtot = 0
+
+    for k in range(K):
+        i0 = 0
+        j0 = 0
+        for i in range(N):
+            for j in range(P):
+                i0 += i*x[i, j, k]
+                if j <= 2:
+                    j0 += j*x[i, j, k]
+                else:
+                    j0 += (j+1)*x[i, j, k]  # on compte la largeur du couloir
+        bar[0] += ind[k].masse*i0
+        bar[1] += ind[k].masse*j0
+        mtot += ind[k].masse
+
+    bar[0] /= mtot
+    bar[1] /= mtot
+
+    return (min_bar_i <= bar[0] <= max_bar_i) and (min_bar_j <= bar[1] <= max_bar_j) 
