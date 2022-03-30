@@ -86,6 +86,7 @@ def new_aff(N, P, tab, ind, m):
     # Fenêtre
     root = tk.Tk()
     root.title('Navion')
+    root.iconbitmap('data/navion.ico')
 
     bebe = ImageTk.PhotoImage(Image.open("data/crying_baby.png"))
     luigo = ImageTk.PhotoImage(Image.open("data/luigo.png"))
