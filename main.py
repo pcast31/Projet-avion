@@ -7,9 +7,10 @@ from lirexcel import lirexcel, lirexcel2, reduction
 from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
 
-
+# Dimensions de l'avion
 N = 30
 P = 6
+# Instance
 scenario = 5
 
 
@@ -31,7 +32,7 @@ if __name__ == '__main__':
     civieres(m, X, ind_reduit)
     nenfants(m,X,ind_reduit)
     taille=lutte_des_classes(m,X,ind_reduit)
-    fct_objectif(m, X, ind_reduit, [0,0,2])
+    fct_objectif(m, X, ind_reduit, [0,0,2]) # Ici, on néglige les couples. Voir postprocessing
     m.update()
     m.optimize()
 

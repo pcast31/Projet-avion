@@ -87,11 +87,11 @@ def new_aff(N, P, tab, ind, m):
     root = tk.Tk()
     root.title('Navion')
 
-    #bebe = ImageTk.PhotoImage(Image.open("data/crying_baby.png"))
-    #luigo = ImageTk.PhotoImage(Image.open("data/luigo.png"))
-    #elizamerch = ImageTk.PhotoImage(Image.open("data/elizamerch.png"))
-    #cx = ImageTk.PhotoImage(Image.open("data/cx.png"))
-    #allez_le_foot = ImageTk.PhotoImage(Image.open("data/allez_le_foot.png"))
+    bebe = ImageTk.PhotoImage(Image.open("data/crying_baby.png"))
+    luigo = ImageTk.PhotoImage(Image.open("data/luigo.png"))
+    elizamerch = ImageTk.PhotoImage(Image.open("data/elizamerch.png"))
+    cx = ImageTk.PhotoImage(Image.open("data/cx.png"))
+    allez_le_foot = ImageTk.PhotoImage(Image.open("data/allez_le_foot.png"))
 
     # Canvas
     canvas = tk.Canvas(root, width=N * 30 + (N + 1) * 10, height=290)
@@ -188,26 +188,26 @@ def new_aff(N, P, tab, ind, m):
                     poids_total += ind[k].masse
                     textes[i][j] = canvas.create_text(x, y, text=str(ind[k].idgroupe), fill='#FFFFFF')
 
-                    #if ind[k].categorie == 'E':
-                        #images.append(canvas.create_image(x - 15, y - 15, anchor=tk.NW, image=bebe, state="hidden"))
+                    if ind[k].categorie == 'E':
+                        images.append(canvas.create_image(x - 15, y - 15, anchor=tk.NW, image=bebe, state="hidden"))
 
-                    #elif ind[k].categorie == 'H':
-                        #images.append(canvas.create_image(x - 15, y - 15, anchor=tk.NW, image=luigo, state="hidden"))
+                    elif ind[k].categorie == 'H':
+                        images.append(canvas.create_image(x - 15, y - 15, anchor=tk.NW, image=luigo, state="hidden"))
 
-                    #elif ind[k].categorie == 'F':
-                        #images.append(canvas.create_image(x - 15, y - 15, anchor=tk.NW, image=elizamerch, state="hidden"))
+                    elif ind[k].categorie == 'F':
+                        images.append(canvas.create_image(x - 15, y - 15, anchor=tk.NW, image=elizamerch, state="hidden"))
 
-                    #elif ind[k].categorie == 'B':
-                        #if j < 3:
-                            #images.append(canvas.create_image(x + 15 - 150, y + 15 - 110, anchor=tk.NW, image=allez_le_foot, state="hidden"))
-                        #else:
-                            #images.append(canvas.create_image(x + 15 - 150, y - 15, anchor=tk.NW, image=allez_le_foot, state="hidden"))
+                    elif ind[k].categorie == 'B':
+                        if j < 3:
+                            images.append(canvas.create_image(x + 15 - 150, y + 15 - 110, anchor=tk.NW, image=allez_le_foot, state="hidden"))
+                        else:
+                            images.append(canvas.create_image(x + 15 - 150, y - 15, anchor=tk.NW, image=allez_le_foot, state="hidden"))
 
-                    #else:
-                        #if j < 3:
-                            #images.append(canvas.create_image(x + 15 - 70, y + 15 - 70, anchor=tk.NW, image=cx, state="hidden"))
-                        #else:
-                            #images.append(canvas.create_image(x + 15 - 70, y - 15, anchor=tk.NW, image=cx, state="hidden"))
+                    else:
+                        if j < 3:
+                            images.append(canvas.create_image(x + 15 - 70, y + 15 - 70, anchor=tk.NW, image=cx, state="hidden"))
+                        else:
+                            images.append(canvas.create_image(x + 15 - 70, y - 15, anchor=tk.NW, image=cx, state="hidden"))
 
                     if ind[k].transit > 0 and ind[k].transit not in transits:
                         transits.append(ind[k].transit)
