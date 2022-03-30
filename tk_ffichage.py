@@ -86,6 +86,7 @@ def new_aff(N, P, tab, ind, m):
     # Fenêtre
     root = tk.Tk()
     root.title('Navion')
+    root.iconbitmap('data/navion.ico')
 
     bebe = ImageTk.PhotoImage(Image.open("data/crying_baby.png"))
     luigo = ImageTk.PhotoImage(Image.open("data/luigo.png"))
@@ -220,7 +221,7 @@ def new_aff(N, P, tab, ind, m):
     if N == 30:
         zone_barycentre = canvas.create_rectangle(10 + 13 * (30 + 10), 3 * (30 + 10), 10 + 17 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
     else:
-        zone_barycentre = canvas.create_rectangle(10 + 16.5 * (30 + 10), 3 * (30 + 10), 10 + 20.5 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
+        zone_barycentre = canvas.create_rectangle(10 + 16 * (30 + 10), 3 * (30 + 10), 10 + 20 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
     barycentre = canvas.create_rectangle(x_barycentre - 5, y_barycentre - 5, x_barycentre + 5, y_barycentre + 5, fill='#00FF00', width=0)
     canvas.itemconfig(zone_barycentre, state='hidden')
     canvas.itemconfig(barycentre, state='hidden')

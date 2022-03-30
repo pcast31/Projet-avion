@@ -12,8 +12,8 @@ def barycentre(m, X, ind, N, P, K):
         max_bar_i = 17
         min_bar_i = 13
     if N == 35:
-        max_bar_i = 20.5
-        min_bar_i = 16.5
+        max_bar_i = 20
+        min_bar_i = 16
 
     bar = [0, 0]
     mtot = 0
@@ -192,11 +192,30 @@ def enfant_issue_secours(model, X, ind):
             for j in range(1, 7):
                 model.addConstr(X[11, j-1, k] == 0, name="C_enf_sec"+str(j))
 
-def nenfants(model, X, ind):
+def nenfants(model, X, ind, b = False):
     """
-    Garantie que les nenfants ne soient pas seuls ༼ つ ◕_◕ ༽つ "
+    Garantie que les nenfants ne soient pas seuls ༼ つ ◕_◕ ༽つ  o(一︿一+)o
+    Par défaut, on veut un adulte sur une demie-rangée s'il y a un enfant.
+    Si b, on impose que l'adulte soit immédiatement à côté du mioche.
     """
     (N,P,K) = np.shape(X)
-    for i in range(N):
-        model.addConstr(sum([ind[k].age*X[i,j,k] for j in range(3,P) for k in range(K)]) >= 0)
-        model.addConstr(sum([ind[k].age*X[i,j,k] for j in range(3) for k in range(K)]) >= 0)
+    pop = [0,0]
+    for k in range(K):
+        if ind[k].categorie in ['H', 'F']:
+            pop[0] += 1
+        elif ind[k].categorie == 'E':
+            pop[1] += 1
+    if b and pop[1] <= pop[0]: # On choisit d'abandonner la contrainte si il y a plus d'enfants que d'adultes.
+        for i in range(N):
+            model.addConstr(sum([ind[k].age*X[i,j,k] for j in range(P-2,P) for k in range(K)]) >= 0)
+            model.addConstr(sum([ind[k].age*X[i,j,k] for j in range(P-3,P-1) for k in range(K)]) >= 0)
+            model.addConstr(sum([ind[k].age*X[i,j,k] for j in range(2) for k in range(K)]) >= 0)
+            model.addConstr(sum([ind[k].age*X[i,j,k] for j in range(1,3) for k in range(K)]) >= 0)
+    elif not b and pop[1] <= pop[0]:    
+        for i in range(N):
+            model.addConstr(sum([ind[k].age*X[i,j,k] for j in range(3,P) for k in range(K)]) >= 0)
+            model.addConstr(sum([ind[k].age*X[i,j,k] for j in range(3) for k in range(K)]) >= 0)
+    else:
+        for i in range(0, N, 3):
+            model.addConstr(sum([ind[k].age*X[x,j,k] for j in range(3) for x in [i,i+1,i+2] for k in range(K)]) >= 0)
+            model.addConstr(sum([ind[k].age*X[x,j,k] for j in range(3,P) for x in [i,i+1,i+2] for k in range(K)]) >= 0)

@@ -17,7 +17,7 @@ def correspondance(model, X, ind, b):
 
 def bonus_groupe1(model, X, ind):
     """
-    On donne 2 point pour des amis assis à côté, 1 point s'ils sont sur des rangées adjacentes.
+    On donne 2 points pour des amis assis à côté, 1 point s'ils sont sur des rangées adjacentes.
     On linéarise en créant T, qui indique si deux amis sont à côté. 
     Beaucoup trop lourd, mais la solution obtenue en interrompant le programme est bonne. 
     """
@@ -112,7 +112,7 @@ def bonus_groupe2(model, X, ind, a):
             #group = group + 0.2*sum([sum([j*X[i,j,k] for j in range(P)]) - sum([j*X[i,j,lien[k][0]] for j in range(P)]) for i in range(N)])
     return a*group 
 
-def bonus_groupe3(model, X, ind):
+def bonus_groupe3(model, X, ind, lst = [True, False]):
     """
     Distance selon j entre deux membres d'un couple. Quadratique.
     """
@@ -122,8 +122,13 @@ def bonus_groupe3(model, X, ind):
         for l in range(K):
             if ind[l] in ind[k].groupe:    
                 lien[k].append(l) 
-    return sum([(sum([j*X[i,j,k] + (P//2 + j + 1)*X[i,P//2 + j,k] for j in range(P//2) for i in range(N)]) 
-            - sum([j*X[i,j,lien[k][0]] + (P//2 + j + 1)*X[i,P//2 + j,lien[k][0]]for j in range(P//2) for i in range(N)]))**2 for k in range(K)  if len(lien[k]) == 1])
+    bonus = lst[0]*sum([(sum([j*X[i,j,k] + (P//2 + j + 1)*X[i,P//2 + j,k] for j in range(P//2) for i in range(N)]) 
+    - sum([j*X[i,j,lien[k][0]] + (P//2 + j + 1)*X[i,P//2 + j,lien[k][0]] for j in range(P//2) for i in range(N)]))**2 for k in range(K)  if len(lien[k]) == 1]) 
+    bonus += sum([(sum([j*X[i,j,k] + (P//2 + j + 1)*X[i,P//2 + j,k] for j in range(P//2) for i in range(N)]) 
+    - sum([j*X[i,j,lien[k][0]] + (P//2 + j + 1)*X[i,P//2 + j,lien[k][0]] for j in range(P//2) for i in range(N)]))**2 for k in range(K)  if len(lien[k]) == 2])
+    bonus += sum([(sum([j*X[i,j,k] + (P//2 + j + 1)*X[i,P//2 + j,k] for j in range(P//2) for i in range(N)]) 
+    - sum([j*X[i,j,lien[k][1]] + (P//2 + j + 1)*X[i,P//2 + j,lien[k][1]] for j in range(P//2) for i in range(N)]))**2 for k in range(K)  if len(lien[k]) == 2])
+    return bonus
 
 def bonus_seul(model, X, ind, coef):
     """
