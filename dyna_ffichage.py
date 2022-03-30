@@ -13,7 +13,7 @@ from tk_ffichage import new_aff
 
 N = 30
 P = 6
-scenario = 2
+scenario = 0
 
 
 
@@ -36,12 +36,14 @@ def dyna_ffichage(N, P,K,tab, ind):
     def calculer(g):
         places = []
 
-        if 'R' not in [individu.cat for individu in groupes[g]] and 'B' not in [individu.cat for individu in groupes[g]]:
+        if 'R' not in [individu.categorie for individu in groupes[g]] and 'B' not in [individu.categorie for individu in groupes[g]]:
             return [place_ind[individu] for individu in groupes[g]]
         
         for gr in groupes:
-            if len(groupes[gr])==len(groupes[g]) and groupes[g][0].classe==groupes[gr][0].classe and 'R' not in [individu.cat for individu in groupes[gr]] and 'B' not in [individu.cat for individu in groupes[gr]]:
+            if len(groupes[gr])==len(groupes[g]) and groupes[g][0].classe==groupes[gr][0].classe and 'R' not in [individu.categorie for individu in groupes[gr]] and 'B' not in [individu.categorie for individu in groupes[gr]]:
                 places.append([place_ind[individu] for individu in groupes[gr]])
+
+        print(places)
 
         return places
 
@@ -59,7 +61,7 @@ def dyna_ffichage(N, P,K,tab, ind):
     for i in ind:
         tailles_groupes[i.idgroupe - 1] = len(i.groupe) + 1
         ind_repr[i.idgroupe-1]=i
-    places_proposees = places_proposees = calculer(tailles_groupes[0])
+    places_proposees = calculer(tailles_groupes[0])
     for i, j in places_proposees:
         canvas.itemconfig(places[i][j], fill='#FF0000')
 
@@ -179,4 +181,4 @@ if __name__ == '__main__':
 
 
 
-    dyna_ffichage(30, 6, lirexcel2(0))
+    dyna_ffichage(30, 6, 0, X.x, lirexcel2(scenario))
