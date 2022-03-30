@@ -25,28 +25,32 @@ def dyna_ffichage(N, P,K,tab, ind):
             groupes[indiv.idgroupe]=[indiv]
         else :
             groupes[indiv.idgroupe].append(indiv)
-        
+
     place_ind={}
     for i in range(N):
-        for j in range(N):
-            if sum([k*tab[i][j][k] for k in range(K)])>0:
+        for j in range(P):
+            if sum([(k+1)*tab[i][j][k] for k in range(K)])>0:
+                print(sum([k*tab[i][j][k] for k in range(K)]))
                 place_ind[sum([k*tab[i][j][k] for k in range(K)])]=(i,j)
 
 
     def calculer(g):
         places = []
 
-        if 'R' not in [individu.categorie for individu in groupes[g]] and 'B' not in [individu.categorie for individu in groupes[g]]:
-            return [place_ind[individu] for individu in groupes[g]]
+        if 'R' in [individu.categorie for individu in groupes[g]] or 'B' in [individu.categorie for individu in groupes[g]]:
+            print("porbleme")
+            return [place_ind[individu.id] for individu in groupes[g]]
         
         for gr in groupes:
             if len(groupes[gr])==len(groupes[g]) and groupes[g][0].classe==groupes[gr][0].classe and 'R' not in [individu.categorie for individu in groupes[gr]] and 'B' not in [individu.categorie for individu in groupes[gr]]:
-                places.append([place_ind[individu] for individu in groupes[gr]])
+                print([individu.id for individu in groupes[gr]])
+                places.append([place_ind[individu.id] for individu in groupes[gr]])
 
-        print(places)
+        print("coucou",places)
 
         return places
 
+    print(calculer(1))
     root = tk.Tk()
 
     canvas = tk.Canvas(root, width=30 * N + 10 * (N + 1), height=30 * (P + 1) + 10 * (P + 2))
@@ -176,9 +180,7 @@ if __name__ == '__main__':
     fct_objectif(m, X, ind_reduit, [0,2,2])
     m.update()
     m.optimize()
+    tab=X.x
 
 
-
-
-
-    dyna_ffichage(30, 6, 0, X.x, lirexcel2(scenario))
+    dyna_ffichage(30, 6, K, X.x, ind_reduit)
