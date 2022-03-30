@@ -1,7 +1,6 @@
 import pandas as pd
 from individu import Individu
 
-# Comme leurs noms l'indiquents, ces fonctions pertmettent de convertir une instance en une liste d'individus.
 
 def lirexcel(scenario, chemin='DataSeating.xlsx'):
     df = pd.read_excel(chemin, sheet_name=scenario)
@@ -126,7 +125,7 @@ def reduction(scenario,ind, chemin='DataSeating.xlsx'):
             taille_groupe[individu.idgroupe]=0
             
         taille=len(individu.groupe)+1
-        if taille<=3 or taille==6:
+        if taille<=3:
             l.append(individu)
 
         elif taille%3==1:
@@ -146,7 +145,7 @@ def reduction(scenario,ind, chemin='DataSeating.xlsx'):
         petit_groupe=groupe[id_petit_groupe]
         for ind1 in petit_groupe:
                 for ind2 in petit_groupe:
-                    if ind1 != ind2 and not ind2 in ind1.groupe:
+                    if ind1 != ind2:
                         ind1.ajout_au_groupe(ind2)
 
     return l
