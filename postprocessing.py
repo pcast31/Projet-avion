@@ -67,7 +67,7 @@ def dimension(ind):
     return nb + buis//2
 
 
-def statique(m, ind, ind_reduit, t_max, a = False, b = True,  P = 6):
+def statique(m, ind, ind_reduit, t_max, a = False, b = True,  P = 6, relax = False):
     """
     Renvoie une solution statique avec post-traitement.
     a resp b indique si on prend en compte les groupes de taille 2 resp 3 dans la première optimisation.
@@ -96,7 +96,7 @@ def statique(m, ind, ind_reduit, t_max, a = False, b = True,  P = 6):
     m.update()
 
     # On ajoute l'objectif linéaire
-    fct_objectif(m, X, ind_reduit, [0,2*a,2*b]) 
+    fct_objectif(m, X, ind_reduit, [0,2*a,2*b], 1-relax, 1-relax) 
 
     m.setParam('Timelimit', t_max)
     m.update()
@@ -104,7 +104,6 @@ def statique(m, ind, ind_reduit, t_max, a = False, b = True,  P = 6):
     start_time = time.time()
 
     m.optimize()
-
     # On regarde si Gurobi a bien trouvé une solution optimale
     if time.time() - start_time > t_max:
         return None
@@ -150,7 +149,12 @@ def meilleure_sol_statique(scenario, t_max = 100, lst_a = [0,1], lst_b = [0,1]):
     # Si aucune instance n'a terminé dans le temps imparti
     if sum([dic_score[a][b] for a in range(2) for b in range(2)]) == 0:
         print("Rien ne termine ! Il faut augmenter t_max.")
-        return(None)
+        print("Relaxation nécessaire.")
+        m = Model()
+        m.setParam('MIPGap', 0.05)
+        resultat = statique(m, ind, ind_reduit, 1000, False, False, relax = True)
+        if resultat != None:
+            dic_score[0][0], placement[0][0] = resultat
 
     # Sinon, on renvoie la meilleure solution obtenue
     best = 0
@@ -165,12 +169,12 @@ def meilleure_sol_statique(scenario, t_max = 100, lst_a = [0,1], lst_b = [0,1]):
     
     return X, ind, ind_reduit, best, a_best, b_best
 
-scenario = 8
-t_max = 2000
+scenario = 4
+t_max = 90
 
-X, ind, ind_reduit, best, a_best, b_best = meilleure_sol_statique(scenario, t_max, [0], [0])
+X, ind, ind_reduit, best, a_best, b_best = meilleure_sol_statique(scenario, t_max, [0, 1], [0, 1])
 (N,P,_) = X.shape
-new_aff(N, P, X, ind)
+#new_aff(N, P, X, ind)
 
 if barycentre2(X, ind):
     print("Barycentre bien placé.")

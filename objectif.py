@@ -165,4 +165,4 @@ def fct_objectif(model, X, ind, coef = [0,1,1], a = 1, b = 1):
     """
     Récapitule les différents objectifs, avec les signes qui vont bien.
     """
-    model.setObjective(bonus_groupe2(model, X, ind, a) - correspondance(model, X, ind, b)-bonus_seul(model,X,ind,coef), GRB.MINIMIZE) #
+    model.setObjective(bonus_groupe2(model, X, ind, a) - correspondance(model, X, ind, b)-bonus_seul(model,X,ind,coef), GRB.MINIMIZE) 
