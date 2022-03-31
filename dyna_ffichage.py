@@ -17,7 +17,7 @@ scenario = 5
 
 
 
-def dyna_ffichage(N, P,K,tab,vrai_ind,m):
+def dyna_ffichage(N, P,K,tab,vrai_ind):
     choix_ind={}
     X_nouveau=[[[0 for k in range(K)]for j in range(P)]for i in range(N)]
     groupes={}
@@ -139,7 +139,7 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
 
         if groupe_compteur>=40000:
             root.destroy()
-            new_aff(N,P,np.array(X_nouveau),vrai_ind,m)
+            new_aff(N,P,np.array(X_nouveau),vrai_ind)
             print(barycentre2(np.array(X_nouveau),vrai_ind))
             verif_enfants(np.array(X_nouveau),vrai_ind)
             return choix_ind
@@ -199,7 +199,7 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
         m2.setObjective(bonus_groupe3(m2, X_opti, ind, [True, True]), GRB.MINIMIZE) # bonus_groupe3 quadratique
         m2.update()
         m2.optimize()
-        new_aff(N,P,X_opti.x,vrai_ind,m2)
+        new_aff(N,P,X_opti.x,vrai_ind)
 
     
 
@@ -271,7 +271,7 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
 
                     if groupe_compteur>=40000:
                         root.destroy()
-                        new_aff(N,P,np.array(X_nouveau),vrai_ind,m)
+                        new_aff(N,P,np.array(X_nouveau),vrai_ind)
                         verif_enfants(np.array(X_nouveau),vrai_ind)
                         print(barycentre2(np.array(X_nouveau),vrai_ind))
                         return choix_ind
@@ -383,4 +383,4 @@ if __name__ == '__main__':
     m.setObjective(bonus_groupe3(m, X, ind_reduit, [True, True]), GRB.MINIMIZE) # bonus_groupe3 quadratique
     m.update()
     m.optimize()
-    dyna_ffichage(30, 6, K, X.x, ind,m)
+    dyna_ffichage(30, 6, K, X.x, ind)
