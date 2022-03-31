@@ -10,7 +10,9 @@ from initialisation import *
 def score(x, ind):
     N,P,K = x.shape
     s_groupe = 0
+    s_groupe_tot = 0
     s_transit = 0
+    s_transit_tot = 0
     placement = [(0, 0)]*K
     lien = [[] for _ in range(K)] 
     for k in range(K):
@@ -23,22 +25,30 @@ def score(x, ind):
             for j in range(P):
                 if x[i, j, k] == 1:
                     placement[k] = (i, j)
+    deja_vu = []
     for k in range(K):
         i0, j0 = placement[k]
         groupe = lien[k]
-        #on compte deux fois chaque voisins mais c'est pas grave étant donné que
-        #cette fonction ne sert qu'à comparer différents résultats
+        K = (len(groupe)+1)//3
+        r = (len(groupe)+1)%3
+        if k not in deja_vu:
+            deja_vu += groupe
+            s_groupe_tot += K*4 + max(K-1, 0)*0.3*3 + (0 if r==0 else (0.3*min(1, K) if r == 1 else 2 + min(1, K)*0.3*2))
         for k2 in groupe:
+            #on compte deux fois chaque voisins, il faudra le prendre en compte à la fin
             i1, j1 = placement[k2]
-            if j1 == j0:
-                if abs(i1 - i0) ==1:
+            if i1 == i0:
+                if abs(j1 - j0) ==1:
                     s_groupe += 2
-            elif abs(j1 - j0) == 1:
-                if i1 == i0:
-                    s_groupe += 1
-        if ind[k].transit <= 90 and i0 <= N/3:
-            s_transit += 1
-    return s_groupe, s_transit
+            elif abs(i1 - i0) == 1:
+                if j1 == j0:
+                    s_groupe += 0.3
+        if 0 < ind[k].transit <= 90:
+            s_transit_tot += 1
+            if i0 <= N/3:
+                s_transit += 1
+    print(f"Le placement des groupes est bon à {s_groupe/(2*s_groupe_tot)}, et le transit est respecté à {s_transit/s_transit_tot}.")
+    return s_groupe/(2*s_groupe_tot), s_transit/s_transit_tot
 
 def barycentre2(x, ind):
     N,P, K = x.shape
