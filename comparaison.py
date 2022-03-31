@@ -31,7 +31,7 @@ def score(x, ind):
         for k2 in groupe:
             i1, j1 = placement[k2]
             if j1 == j0:
-                if abs(i1 - i0) ==1:
+                if abs(i1 - i0) == 1:
                     s_groupe += 2
             elif abs(j1 - j0) == 1:
                 if i1 == i0:

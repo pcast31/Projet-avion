@@ -83,13 +83,13 @@ def lezgongue_command():
         def write(self, s):
             global f
             if '%' in s and f != 0:
-                m = re.search(r'\d*\.?\d+(?=%)', s)
-                lf = float(m.group(0))
+                m = re.search(r'-?\d*\.?\d+(?=%)', s)
+                lf = abs(float(m.group(0)))
                 bar['value'] = lf
                 lab['text'] = '༼ つ >_< ༽つ'
 
                 
-                m = re.search(r'-?\d*\.?\d+(?=\s+-?\d*\.?\d+\s+\d*\.?\d+%)', s)
+                m = re.search(r'-?\d*\.?\d+(?=\s+-?\d*\.?\d+\s+-?\d*\.?\d+%)', s)
                 if m is not None:
                     score['text'] = f'Score : {float(m.group(0))}'
 
