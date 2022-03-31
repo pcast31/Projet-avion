@@ -18,7 +18,7 @@ class Individu:
 
 def nb_groupes(ind):
     """
-    Compte le nombre de groupe de taille 1,2 et 3. Inutile dans l'immédiat.
+    Compte le nombre de groupe de taille 1,2 et 3. 
     """
     lst = [0,0,0]
     for e in ind:
@@ -29,5 +29,3 @@ def nb_groupes(ind):
         elif len(e.groupe) == 2:
             lst[2] += 1
     return [lst[0],lst[1]/2,lst[2]/3]
-
-

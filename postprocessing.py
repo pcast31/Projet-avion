@@ -12,7 +12,7 @@ from comparaison import *
 N = 30
 P = 6
 # Instance
-scenario = 7
+scenario = 2
 
 def dimension(ind):
     """
@@ -41,6 +41,12 @@ ind=lirexcel2(scenario)
 #    N = 35
 
 ind_reduit= reduction(scenario, ind) # Scinde les groupes de 4 et plus en petits groupes
+
+nb = nb_groupes(ind_reduit)
+print(nb)
+
+a, b = False, False
+
 K=len(ind)
 X=initialise(m,N,P,K)
 m.update()
@@ -54,7 +60,7 @@ enfant_issue_secours(m, X ,ind_reduit)
 civieres(m, X, ind_reduit)
 nenfants(m,X,ind_reduit)
 taille=lutte_des_classes(m,X,ind_reduit)
-fct_objectif(m, X, ind_reduit, [0,0,2])
+fct_objectif(m, X, ind_reduit, [0,2*a,2*b])
 m.update()
 m.optimize()
 new_aff(N, P, X.x, ind, m)
@@ -93,8 +99,8 @@ def post_traitement(m, X, ind, lst = [False, False, True]):
             for i in range(N):    
                 m.addConstr(sum([X[i,j,k] for j in range(P)]) == sum(X[i,j,k].x for j in range(P)))
 
-post_traitement(m, X, ind_reduit, [False, False, True])
-m.setObjective(bonus_groupe3(m, X, ind_reduit, [True, False]), GRB.MINIMIZE) # bonus_groupe3 quadratique
+post_traitement(m, X, ind_reduit, [False, 1-a, 1-b])
+m.setObjective(bonus_groupe3(m, X, ind_reduit, [1-a, 1-b]), GRB.MINIMIZE) # bonus_groupe3 quadratique
 m.update()
 m.optimize()
 new_aff(N, P, X.x, ind, m)
