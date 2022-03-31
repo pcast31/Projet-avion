@@ -14,58 +14,6 @@ P = 6
 # Instance
 scenario = 7
 
-def dimension(ind):
-    """
-    Indique le nombre de places minimal pour une instance donnée.
-    """
-    nb = 0
-    buis = 1
-    for e in ind:
-        if e.categorie == 'R':
-            nb += 4
-        elif e.categorie == 'B':
-            nb += 12
-        else:
-            nb += 1
-        if e.classe == 1:
-            buis += 1
-    return nb + buis//2
-
-# Ici, on détermine une solution sans chercher à placer les couples à côté pour alléger les calculs.
-# On ré-optimise ensuite en fixant les groupes déjà bien placés.
-
-m=Model()
-ind=lirexcel2(scenario)
-
-if dimension(ind) > 180:
-    N = 35
-
-ind_reduit= reduction(scenario, ind) # Scinde les groupes de 4 et plus en petits groupes
-
-nb = nb_groupes(ind_reduit)
-print(nb)
-
-a, b = False, True # si a, on gère les groupes de 2 dans le modèle linéaire, sinon dans le postprocessing
-# idem pour b et les groupes de 3
-
-K=len(ind)
-X=initialise(m,N,P,K)
-m.update()
-barycentre(m,X,ind_reduit,N,P,K)
-unicite_personne(m,X,N,P,K)
-unicite_siege(m,X,N,P,K)
-chef_de_groupe(m, X, ind_reduit)
-#symetrie(m,X,ind,N,P,K)
-chaises_roulantes(m, X, ind_reduit)
-enfant_issue_secours(m, X ,ind_reduit)
-civieres(m, X, ind_reduit)
-nenfants(m,X,ind_reduit)
-taille=lutte_des_classes(m,X,ind_reduit)
-fct_objectif(m, X, ind_reduit, [0,2*a,2*b])
-m.update()
-m.optimize()
-new_aff(N, P, X.x, ind, m)
-
 def post_traitement(m, X, ind, lst = [False, False, True]):
     (N,P,K) = np.shape(X)
     lien = [[] for _ in range(K)] # On crée la liste des amis d'un individu donné
@@ -99,6 +47,63 @@ def post_traitement(m, X, ind, lst = [False, False, True]):
         else:
             for i in range(N):    
                 m.addConstr(sum([X[i,j,k] for j in range(P)]) == sum(X[i,j,k].x for j in range(P)))
+
+def dimension(ind):
+    """
+    Indique le nombre de places minimal pour une instance donnée.
+    """
+    nb = 0
+    buis = 1
+    for e in ind:
+        if e.categorie == 'R':
+            nb += 4
+        elif e.categorie == 'B':
+            nb += 12
+        else:
+            nb += 1
+        if e.classe == 1:
+            buis += 1
+    return nb + buis//2
+
+# Ici, on détermine une solution sans chercher à placer les couples à côté pour alléger les calculs.
+# On ré-optimise ensuite en fixant les groupes déjà bien placés.
+
+
+if __name__ == '__main__':
+    m=Model()
+    ind=lirexcel2(scenario)
+
+    if dimension(ind) > 180:
+        N = 35
+
+    ind_reduit= reduction(scenario, ind) # Scinde les groupes de 4 et plus en petits groupes
+
+    nb = nb_groupes(ind_reduit)
+    print(nb)
+
+    a, b = False, True # si a, on gère les groupes de 2 dans le modèle linéaire, sinon dans le postprocessing
+    # idem pour b et les groupes de 3
+
+
+    K=len(ind)
+    X=initialise(m,N,P,K)
+    m.update()
+    barycentre(m,X,ind_reduit,N,P,K)
+    unicite_personne(m,X,N,P,K)
+    unicite_siege(m,X,N,P,K)
+    chef_de_groupe(m, X, ind_reduit)
+    #symetrie(m,X,ind,N,P,K)
+    chaises_roulantes(m, X, ind_reduit)
+    enfant_issue_secours(m, X ,ind_reduit)
+    civieres(m, X, ind_reduit)
+    nenfants(m,X,ind_reduit)
+    taille=lutte_des_classes(m,X,ind_reduit)
+    fct_objectif(m, X, ind_reduit, [0,2*a,2*b])
+    m.update()
+    m.optimize()
+    new_aff(N, P, X.x, ind, m)
+
+
 
 post_traitement(m, X, ind_reduit, [False, a, b])
 m.setObjective(bonus_groupe3(m, X, ind_reduit, [1-a, 1-b]), GRB.MINIMIZE) # bonus_groupe3 quadratique
