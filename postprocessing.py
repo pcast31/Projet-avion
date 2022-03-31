@@ -6,12 +6,13 @@ from objectif import *
 from lirexcel import lirexcel, lirexcel2, reduction
 from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
+from comparaison import *
 
 # Dimensions de l'avion
 N = 30
 P = 6
 # Instance
-scenario = 1
+scenario = 3
 
 def dimension(ind):
     """
@@ -21,11 +22,11 @@ def dimension(ind):
     buis = 1
     for e in ind:
         if e.categorie == 'R':
-            e += 4
+            nb += 4
         elif e.categorie == 'B':
-            e += 12
+            nb += 12
         else:
-            e += 1
+            nb += 1
         if e.classe == 1:
             buis += 1
     return nb + buis//2
@@ -97,3 +98,10 @@ m.setObjective(bonus_groupe3(m, X, ind_reduit, [True, False]), GRB.MINIMIZE) # b
 m.update()
 m.optimize()
 new_aff(N, P, X.x, ind, m)
+
+if barycentre2(X.x, ind):
+    print("Barycentre bien placé.")
+else:
+    print("Problème de barycentre !")
+
+verif_enfants(X.x, ind)
