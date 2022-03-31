@@ -12,7 +12,7 @@ from comparaison import *
 N = 30
 P = 6
 # Instance
-scenario = 7
+scenario = 5
 
 def post_traitement(m, X, ind, lst = [False, False, True]):
     (N,P,K) = np.shape(X)
@@ -105,17 +105,17 @@ if __name__ == '__main__':
 
 
 
-post_traitement(m, X, ind_reduit, [False, a, b])
-m.setObjective(bonus_groupe3(m, X, ind_reduit, [1-a, 1-b]), GRB.MINIMIZE) # bonus_groupe3 quadratique
-m.update()
-m.optimize()
-new_aff(N, P, X.x, ind, m)
+    post_traitement(m, X, ind_reduit, [False, a, b])
+    m.setObjective(bonus_groupe3(m, X, ind_reduit, [1-a, 1-b]), GRB.MINIMIZE) # bonus_groupe3 quadratique
+    m.update()
+    m.optimize()
+    new_aff(N, P, X.x, ind, m)
 
-if barycentre2(X.x, ind):
-    print("Barycentre bien placé.")
-else:
-    print("Problème de barycentre !")
+    if barycentre2(X.x, ind):
+        print("Barycentre bien placé.")
+    else:
+        print("Problème de barycentre !")
 
-verif_enfants(X.x, ind)
+    verif_enfants(X.x, ind)
 
-print(score(X.x, ind))
+    print(score(X.x, ind))
