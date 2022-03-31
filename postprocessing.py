@@ -12,7 +12,7 @@ from comparaison import *
 N = 30
 P = 6
 # Instance
-scenario = 5
+scenario = 8
 
 def post_traitement(m, X, ind, lst = [False, False, True]):
     (N,P,K) = np.shape(X)
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     nb = nb_groupes(ind_reduit)
     print(nb)
 
-    a, b = False, True # si a, on gère les groupes de 2 dans le modèle linéaire, sinon dans le postprocessing
+    a, b = False, False # si a, on gère les groupes de 2 dans le modèle linéaire, sinon dans le postprocessing
     # idem pour b et les groupes de 3
 
 
