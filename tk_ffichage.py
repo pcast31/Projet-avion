@@ -218,7 +218,7 @@ def new_aff(N, P, tab, ind, m):
 
 
     # Barycentre
-    if N == 30:
+    if N == 30 or N == 29:
         zone_barycentre = canvas.create_rectangle(10 + 13 * (30 + 10), 3 * (30 + 10), 10 + 17 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
     else:
         zone_barycentre = canvas.create_rectangle(10 + 16 * (30 + 10), 3 * (30 + 10), 10 + 20 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
