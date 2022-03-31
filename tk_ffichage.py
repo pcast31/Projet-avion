@@ -218,7 +218,7 @@ def new_aff(N, P, tab, ind, m):
 
 
     # Barycentre
-    if N == 30:
+    if N == 30 or N == 29:
         zone_barycentre = canvas.create_rectangle(10 + 13 * (30 + 10), 3 * (30 + 10), 10 + 17 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
     else:
         zone_barycentre = canvas.create_rectangle(10 + 16 * (30 + 10), 3 * (30 + 10), 10 + 20 * (30 + 10) + 30, 10 + 4 * (30 + 10), outline='#FF0000', width=2)
@@ -366,8 +366,11 @@ def new_aff(N, P, tab, ind, m):
                             canvas.itemconfig(places[i][j], fill=couleurs[i][j])
                         elif ind[k].transit == 0 or ind[k].transit > 90:
                             canvas.itemconfig(places[i][j], fill='#000000')
-                        else :
-                            canvas.itemconfig(places[i][j], fill='#00A000')
+                        else:
+                            if i <= N // 3:
+                                canvas.itemconfig(places[i][j], fill='#00A000')
+                            else:
+                                canvas.itemconfig(places[i][j], fill='#A00000')
 
         for image in images:
             canvas.itemconfig(image, state='hidden')

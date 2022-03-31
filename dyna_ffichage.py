@@ -1,5 +1,5 @@
 import tkinter as tk
-from random import randrange
+from random import randrange,choice
 from initialisation import initialise
 from gurobipy import *
 import numpy as np
@@ -9,15 +9,16 @@ from lirexcel import lirexcel, lirexcel2, reduction
 from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
 from postprocessing import post_traitement,dimension
-from comparaison import verif_enfants
+from comparaison import verif_enfants,barycentre2
 
 N = 30
 P = 6
-scenario = 7
+scenario = 5
 
 
 
 def dyna_ffichage(N, P,K,tab,vrai_ind,m):
+    choix_ind={}
     X_nouveau=[[[0 for k in range(K)]for j in range(P)]for i in range(N)]
     groupes={}
     ind=reduction(scenario, vrai_ind)
@@ -106,29 +107,63 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
 
 
     def aleatoire_command():
-        nonlocal groupe_compteur
+        nonlocal possibilite
+        nonlocal places_proposees
         nonlocal X_nouveau
-        root.destroy()
-        m2=Model()
-        X_opti=initialise(m2,N,P,K)
-        m2.update()
-        barycentre(m2,X_opti,ind,N,P,K)
-        unicite_personne(m2,X_opti,N,P,K)
-        unicite_siege(m2,X_opti,N,P,K)
-        chef_de_groupe(m2, X_opti, ind)
-        #symetrie(m,X,ind,N,P,K)
-        for i in range(N):
-            for j in range(P):
-                for k in range(K):
-                    m2.addConstr(X_opti[i,j,k]>=X_nouveau[i][j][k])
-        chaises_roulantes(m2, X_opti, ind)
-        civieres(m2, X_opti, ind)
-        nenfants(m2,X_opti,ind)
-        taille=lutte_des_classes(m2,X_opti,ind)
-        m2.setObjective(1,GRB.MINIMIZE)
-        m2.update()
-        m2.optimize()
-        new_aff(N,P,X_opti.x,vrai_ind,m2)
+        nonlocal groupe_compteur
+        nonlocal places_rempli  
+
+        (i,j)=choice(possibilite)
+        places_prises=[(i,j)]+places_associes[(i,j)]
+        places_rempli=places_rempli+places_prises
+        secours=0 
+        if 'R' in [individu.categorie for individu in groupes[groupe_compteur]] or 'B' in [individu.categorie for individu in groupes[groupe_compteur]]:
+            for individu in groupes[groupe_compteur]:
+                choix_ind[individu]=len(possibilite)
+                for i in range(N):
+                    for j in range(P):
+                        X_nouveau[i][j][individu.id]=tab[i][j][individu.id]
+        else:
+            for id in range(len(places_prises)):
+                choix_ind[groupes[groupe_compteur][id].id]=len(possibilite)
+                i2,j2=places_prises[id]
+                if i2==11 and secours==0:
+                    secours+=1
+                    nombre_groupe_secours[len(groupes[groupe_compteur])]=nombre_groupe_secours[len(groupes[groupe_compteur])]-1
+            canvas.itemconfig(places[i2][j2], fill='#00FF00')
+            X_nouveau[i2][j2][groupes[groupe_compteur][id].id]=1
+        groupe_compteur+=1
+        while groupe_compteur not in groupes and groupe_compteur<50000:
+            groupe_compteur+=1
+
+
+        if groupe_compteur>=40000:
+            root.destroy()
+            new_aff(N,P,np.array(X_nouveau),vrai_ind,m)
+            print(barycentre2(np.array(X_nouveau),vrai_ind))
+            verif_enfants(np.array(X_nouveau),vrai_ind)
+            return choix_ind
+        else:
+            groupe_label['text'] ='Groupe ' +str(groupe_compteur)+' comprenant '+str(len(groupes[groupe_compteur]))+ ' personnes'
+
+
+        places_proposees = calculer(groupe_compteur)
+        possibilite=[]
+        for sous_groupe in places_proposees:
+            for i3,j3 in sous_groupe:
+                if (i3,j3) not in places_rempli:
+                    canvas.itemconfig(places[i3][j3], fill='#FF0000')
+                    possibilite.append((i3,j3))
+        for i4 in range(N):
+            for j4 in range(P):
+                if (i4, j4) in possibilite:
+                    canvas.itemconfig(places[i4][j4], fill='#FF0000')
+                elif (i4, j4) in places_rempli:
+                    canvas.itemconfig(places[i4][j4], fill='#00FF00')                                
+                else:
+                    canvas.itemconfig(places[i4][j4], fill='#465582')
+
+
 
 
     aleatoire_button = tk.Button(root, text='Choix aléatoire', command=aleatoire_command)
@@ -164,7 +199,6 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
         m2.setObjective(bonus_groupe3(m2, X_opti, ind, [True, True]), GRB.MINIMIZE) # bonus_groupe3 quadratique
         m2.update()
         m2.optimize()
-        print(X_opti.x)
         new_aff(N,P,X_opti.x,vrai_ind,m2)
 
     
@@ -216,12 +250,14 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
                     secours=0
                     if 'R' in [individu.categorie for individu in groupes[groupe_compteur]] or 'B' in [individu.categorie for individu in groupes[groupe_compteur]]:
                         for individu in groupes[groupe_compteur]:
+                            choix_ind[individu]=len(possibilite)
                             for i in range(N):
                                 for j in range(P):
                                     X_nouveau[i][j][individu.id]=tab[i][j][individu.id]
                     else:
 
                         for id in range(len(places_prises)):
+                            choix_ind[groupes[groupe_compteur][id].id]=len(possibilite)
                             i2,j2=places_prises[id]
                             if i2==11 and secours==0:
                                 secours+=1
@@ -235,8 +271,10 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
 
                     if groupe_compteur>=40000:
                         root.destroy()
-                        verif_enfants(np.array(X_nouveau),ind)
                         new_aff(N,P,np.array(X_nouveau),vrai_ind,m)
+                        verif_enfants(np.array(X_nouveau),vrai_ind)
+                        print(barycentre2(np.array(X_nouveau),vrai_ind))
+                        return choix_ind
                     else:
                         groupe_label['text'] ='Groupe ' +str(groupe_compteur)+' comprenant '+str(len(groupes[groupe_compteur]))+ ' personne' + ('s' if len(groupes[groupe_compteur]) > 1 else '')
 

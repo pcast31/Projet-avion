@@ -10,7 +10,7 @@ from comparaison import *
 import time
 
 # Dimensions de l'avion
-N = 30
+N = 29
 P = 6
 # Instance
 scenario = 5
