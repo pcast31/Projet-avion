@@ -13,11 +13,12 @@ from comparaison import verif_enfants,barycentre2
 
 N = 30
 P = 6
-scenario = 7
+scenario = 5
 
 
 
 def dyna_ffichage(N, P,K,tab,vrai_ind,m):
+    choix_ind={}
     X_nouveau=[[[0 for k in range(K)]for j in range(P)]for i in range(N)]
     groupes={}
     ind=reduction(scenario, vrai_ind)
@@ -118,11 +119,13 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
         secours=0 
         if 'R' in [individu.categorie for individu in groupes[groupe_compteur]] or 'B' in [individu.categorie for individu in groupes[groupe_compteur]]:
             for individu in groupes[groupe_compteur]:
+                choix_ind[individu]=len(possibilite)
                 for i in range(N):
                     for j in range(P):
                         X_nouveau[i][j][individu.id]=tab[i][j][individu.id]
         else:
             for id in range(len(places_prises)):
+                choix_ind[groupes[groupe_compteur][id].id]=len(possibilite)
                 i2,j2=places_prises[id]
                 if i2==11 and secours==0:
                     secours+=1
@@ -139,7 +142,7 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
             new_aff(N,P,np.array(X_nouveau),vrai_ind,m)
             print(barycentre2(np.array(X_nouveau),vrai_ind))
             verif_enfants(np.array(X_nouveau),vrai_ind)
-            return
+            return choix_ind
         else:
             groupe_label['text'] ='Groupe ' +str(groupe_compteur)+' comprenant '+str(len(groupes[groupe_compteur]))+ ' personnes'
 
@@ -247,12 +250,14 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
                     secours=0
                     if 'R' in [individu.categorie for individu in groupes[groupe_compteur]] or 'B' in [individu.categorie for individu in groupes[groupe_compteur]]:
                         for individu in groupes[groupe_compteur]:
+                            choix_ind[individu]=len(possibilite)
                             for i in range(N):
                                 for j in range(P):
                                     X_nouveau[i][j][individu.id]=tab[i][j][individu.id]
                     else:
 
                         for id in range(len(places_prises)):
+                            choix_ind[groupes[groupe_compteur][id].id]=len(possibilite)
                             i2,j2=places_prises[id]
                             if i2==11 and secours==0:
                                 secours+=1
@@ -269,7 +274,7 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
                         new_aff(N,P,np.array(X_nouveau),vrai_ind,m)
                         verif_enfants(np.array(X_nouveau),vrai_ind)
                         print(barycentre2(np.array(X_nouveau),vrai_ind))
-                        return
+                        return choix_ind
                     else:
                         groupe_label['text'] ='Groupe ' +str(groupe_compteur)+' comprenant '+str(len(groupes[groupe_compteur]))+ ' personne' + ('s' if len(groupes[groupe_compteur]) > 1 else '')
 
