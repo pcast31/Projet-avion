@@ -13,7 +13,7 @@ from comparaison import verif_enfants,barycentre2
 
 N = 30
 P = 6
-scenario = 0
+scenario = 7
 
 
 
@@ -78,6 +78,8 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
         else:
             return [p for p in places if sum([i==11 for (i,j) in p])>0]
     root = tk.Tk()
+    root.title('Navion')
+    root.iconbitmap('data/navion.ico')
 
     canvas = tk.Canvas(root, width=30 * N + 10 * (N + 1), height=30 * (P + 1) + 10 * (P + 2))
     canvas.pack()
@@ -114,11 +116,17 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
         places_prises=[(i,j)]+places_associes[(i,j)]
         places_rempli=places_rempli+places_prises
         secours=0 
-        for id in range(len(places_prises)):
-            i2,j2=places_prises[id]
-            if i2==11 and secours==0:
-                secours+=1
-                nombre_groupe_secours[len(groupes[groupe_compteur])]=nombre_groupe_secours[len(groupes[groupe_compteur])]-1
+        if 'R' in [individu.categorie for individu in groupes[groupe_compteur]] or 'B' in [individu.categorie for individu in groupes[groupe_compteur]]:
+            for individu in groupes[groupe_compteur]:
+                for i in range(N):
+                    for j in range(P):
+                        X_nouveau[i][j][individu.id]=tab[i][j][individu.id]
+        else:
+            for id in range(len(places_prises)):
+                i2,j2=places_prises[id]
+                if i2==11 and secours==0:
+                    secours+=1
+                    nombre_groupe_secours[len(groupes[groupe_compteur])]=nombre_groupe_secours[len(groupes[groupe_compteur])]-1
             canvas.itemconfig(places[i2][j2], fill='#00FF00')
             X_nouveau[i2][j2][groupes[groupe_compteur][id].id]=1
         groupe_compteur+=1
@@ -263,7 +271,29 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
                         print(barycentre2(np.array(X_nouveau),vrai_ind))
                         return
                     else:
-                        groupe_label['text'] ='Groupe ' +str(groupe_compteur)+' comprenant '+str(len(groupes[groupe_compteur]))+ ' personnes'
+                        groupe_label['text'] ='Groupe ' +str(groupe_compteur)+' comprenant '+str(len(groupes[groupe_compteur]))+ ' personne' + ('s' if len(groupes[groupe_compteur]) > 1 else '')
+
+                        for k in groupes[groupe_compteur]:
+                            if k.categorie == 'B':
+                                groupe_label['text'] += '(B)'
+                                break
+
+                        for k in groupes[groupe_compteur]:
+                            if k.categorie == 'R':
+                                groupe_label['text'] += '(R)'
+                                break
+
+                        for k in groupes[groupe_compteur]:
+                            if 0 < k.transit <= 90:
+                                groupe_label['text'] += '(t)'
+                                break
+
+                        for k in groupes[groupe_compteur]:
+                            if k.classe == 1:
+                                groupe_label['text'] += '(b)'
+                                break
+
+
 
 
                     places_proposees = calculer(groupe_compteur)
@@ -298,7 +328,7 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
                 if j >= 3:
                     j -= 1
             
-            if i>=0 and j>=0:
+            if i>=0 and j>=0 and (i,j) in places_associes.keys():
                 places_prises=[(i,j)]+places_associes[(i,j)]
                 for i2 in range(N):
                     for j2 in range(P):
