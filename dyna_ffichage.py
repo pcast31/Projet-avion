@@ -13,7 +13,7 @@ from comparaison import verif_enfants
 
 N = 30
 P = 6
-scenario = 2
+scenario = 7
 
 
 
@@ -78,6 +78,8 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
         else:
             return [p for p in places if sum([i==11 for (i,j) in p])>0]
     root = tk.Tk()
+    root.title('Navion')
+    root.iconbitmap('data/navion.ico')
 
     canvas = tk.Canvas(root, width=30 * N + 10 * (N + 1), height=30 * (P + 1) + 10 * (P + 2))
     canvas.pack()
@@ -236,7 +238,29 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
                         verif_enfants(np.array(X_nouveau),ind)
                         new_aff(N,P,np.array(X_nouveau),vrai_ind,m)
                     else:
-                        groupe_label['text'] ='Groupe ' +str(groupe_compteur)+' comprenant '+str(len(groupes[groupe_compteur]))+ ' personnes'
+                        groupe_label['text'] ='Groupe ' +str(groupe_compteur)+' comprenant '+str(len(groupes[groupe_compteur]))+ ' personne' + ('s' if len(groupes[groupe_compteur]) > 1 else '')
+
+                        for k in groupes[groupe_compteur]:
+                            if k.categorie == 'B':
+                                groupe_label['text'] += '(B)'
+                                break
+
+                        for k in groupes[groupe_compteur]:
+                            if k.categorie == 'R':
+                                groupe_label['text'] += '(R)'
+                                break
+
+                        for k in groupes[groupe_compteur]:
+                            if 0 < k.transit <= 90:
+                                groupe_label['text'] += '(t)'
+                                break
+
+                        for k in groupes[groupe_compteur]:
+                            if k.classe == 1:
+                                groupe_label['text'] += '(b)'
+                                break
+
+
 
 
                     places_proposees = calculer(groupe_compteur)
@@ -271,7 +295,7 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
                 if j >= 3:
                     j -= 1
             
-            if i>=0 and j>=0:
+            if i>=0 and j>=0 and (i,j) in places_associes.keys():
                 places_prises=[(i,j)]+places_associes[(i,j)]
                 for i2 in range(N):
                     for j2 in range(P):
