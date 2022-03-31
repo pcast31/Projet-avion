@@ -8,6 +8,9 @@ from gurobipy import *
 from initialisation import *
 
 def score(x, ind):
+    """
+    Renvoie le ratio entre le score d'une solution et le score maximal possible.
+    """
     N,P,K = x.shape
     s_groupe = 0
     s_groupe_tot = 0
@@ -47,10 +50,13 @@ def score(x, ind):
             s_transit_tot += 1
             if i0 <= N/3:
                 s_transit += 1
-    print(f"Le placement des groupes est bon à {s_groupe/(2*s_groupe_tot)}, et le transit est respecté à {s_transit/s_transit_tot}.")
+    #print(f"Le placement des groupes est bon à {s_groupe/(2*s_groupe_tot)}, et le transit est respecté à {s_transit/s_transit_tot}.")
     return s_groupe/(2*s_groupe_tot), s_transit/s_transit_tot
 
 def barycentre2(x, ind):
+    """
+    Permet de vérifier le bon placement du barycentre pour une solution qui ne serait pas obtenue via Gurobi. 
+    """
     N,P, K = x.shape
 
     max_bar_j = 4

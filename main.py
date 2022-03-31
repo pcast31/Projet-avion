@@ -6,6 +6,8 @@ from objectif import *
 from lirexcel import lirexcel, lirexcel2, reduction
 from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
+from comparaison import *
+import time
 
 # Dimensions de l'avion
 N = 30

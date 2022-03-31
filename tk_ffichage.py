@@ -78,7 +78,7 @@ def aff(tab, l, m):
 
 etat_couleurs = 'base'
 
-def new_aff(N, P, tab, ind, m):
+def new_aff(N, P, tab, ind):
     global etat_couleurs
 
     print('Début affichage')
