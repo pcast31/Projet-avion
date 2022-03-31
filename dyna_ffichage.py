@@ -8,12 +8,12 @@ from objectif import *
 from lirexcel import lirexcel, lirexcel2, reduction
 from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
-
-
+from postprocessing import post_traitement,dimension
+from comparaison import verif_enfants
 
 N = 30
 P = 6
-scenario = 0
+scenario = 2
 
 
 
@@ -37,21 +37,46 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
     for k in range(K):
             places_associes[place_ind[k]]=list(set([place_ind[l.id] for l in ind[k].groupe]))
 
+    issue_de_secours=list(set([sum([individu.idgroupe*tab[11,j,individu.id] for individu in ind]) for j in range(6) if sum([individu.idgroupe*tab[11,j,individu.id] for individu in ind])>0]))
+    nombre_groupe_secours=[sum([1 for gr in issue_de_secours if len(groupes[gr])==card])for card in range(0,4)]
+
+    def enfant(groupe):
+        for ind in groupe:
+            if ind.categorie=='E':
+                return True
+        return False
+
+    def dernier_groupe_adulte(g,nb):
+        if nb==0:
+            return False
+        for gr in groupes:
+            if gr>g and len(groupes[g])==len(groupes[gr]) and not(enfant(groupes[gr])):
+                if nb==1:
+                    return False
+                else:
+                    return dernier_groupe_adulte(gr,nb-1)
+        return True
 
 
     def calculer(g):
         places = []
+        places_enfants = []
         if 'R' in [individu.categorie for individu in groupes[g]] or 'B' in [individu.categorie for individu in groupes[g]]:
-            return [place_ind[individu.id] for individu in groupes[g]]
+            return [[place_ind[individu.id] for individu in groupes[g]]]
         
         for gr in groupes:
             if groupes[gr][0].classe==groupes[g][0].classe and len(groupes[gr])==len(groupes[g]) and groupes[g][0].classe==groupes[gr][0].classe and 'R' not in [individu.categorie for individu in groupes[gr]] and 'B' not in [individu.categorie for individu in groupes[gr]]:
                 positions=[place_ind[individu.id] for individu in groupes[gr]]
                 if sum([sum([k*X_nouveau[i][j][k] for i,j in positions])for k in range(K)])==0:
                     places.append(positions)
-
-
-        return places
+                    if sum([i==11 for (i,j) in positions])==0:
+                        places_enfants.append(positions)
+        if enfant(groupes[g]):
+            return places_enfants
+        elif not(dernier_groupe_adulte(g,nombre_groupe_secours[len(groupes[g])])):
+            return places
+        else:
+            return [p for p in places if sum([i==11 for (i,j) in p])>0]
     root = tk.Tk()
 
     canvas = tk.Canvas(root, width=30 * N + 10 * (N + 1), height=30 * (P + 1) + 10 * (P + 2))
@@ -80,27 +105,28 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
 
     def aleatoire_command():
         nonlocal groupe_compteur
-        nonlocal places_proposees
-        #nonlocal places_selectionnees
-
-        places_selectionnees = []
-
-        if groupe_compteur == len(tailles_groupes):
-            aleatoire_button['state'] = 'disabled'
-            opti_button['state'] = 'disabled'
-
-        else:
-            groupe_compteur += 1
-            groupe_label['text'] = f'Groupe {groupe_compteur}'
-
-            places_proposees = calculer(tailles_groupes[groupe_compteur - 1])
-
-            for i in range(N):
-                for j in range(P):
-                    if (i, j) in [i for i in places for places in places_proposees]:
-                        canvas.itemconfig(places[i][j], fill='#FF0000')
-                    else:
-                        canvas.itemconfig(places[i][j], fill='#465582')
+        nonlocal X_nouveau
+        root.destroy()
+        m2=Model()
+        X_opti=initialise(m2,N,P,K)
+        m2.update()
+        barycentre(m2,X_opti,ind,N,P,K)
+        unicite_personne(m2,X_opti,N,P,K)
+        unicite_siege(m2,X_opti,N,P,K)
+        chef_de_groupe(m2, X_opti, ind)
+        #symetrie(m,X,ind,N,P,K)
+        for i in range(N):
+            for j in range(P):
+                for k in range(K):
+                    m2.addConstr(X_opti[i,j,k]>=X_nouveau[i][j][k])
+        chaises_roulantes(m2, X_opti, ind)
+        civieres(m2, X_opti, ind)
+        nenfants(m2,X_opti,ind)
+        taille=lutte_des_classes(m2,X_opti,ind)
+        m2.setObjective(1,GRB.MINIMIZE)
+        m2.update()
+        m2.optimize()
+        new_aff(N,P,X_opti.x,vrai_ind,m2)
 
 
     aleatoire_button = tk.Button(root, text='Choix aléatoire', command=aleatoire_command)
@@ -108,17 +134,37 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
 
     
     def opti_command():
+        root.destroy()
         nonlocal groupe_compteur
+        nonlocal X_nouveau
+        m2=Model()
+        X_opti=initialise(m2,N,P,K)
+        m2.update()
+        barycentre(m2,X_opti,ind,N,P,K)
+        unicite_personne(m2,X_opti,N,P,K)
+        unicite_siege(m2,X_opti,N,P,K)
+        chef_de_groupe(m2, X_opti, ind)
+        #symetrie(m,X,ind,N,P,K)
+        for i in range(N):
+            for j in range(P):
+                for k in range(K):
+                    m2.addConstr(X_opti[i,j,k]>=X_nouveau[i][j][k])
+        chaises_roulantes(m2, X_opti, ind)
+        civieres(m2, X_opti, ind)
+        nenfants(m2,X_opti,ind)
+        taille=lutte_des_classes(m2,X_opti,ind)
+        fct_objectif(m2, X_opti, ind, [0,2,2])
+        m2.update()
+        m2.optimize()
 
-        if groupe_compteur == len(tailles_groupes):
-            aleatoire_button['state'] = 'disabled'
-            opti_button['state'] = 'disabled'
 
-        else:
-            groupe_compteur += 1
-            groupe_label['text'] = f'Groupe {groupe_compteur}'
+        post_traitement(m2, X_opti, ind, [False, False, False])
+        m2.setObjective(bonus_groupe3(m2, X_opti, ind, [True, True]), GRB.MINIMIZE) # bonus_groupe3 quadratique
+        m2.update()
+        m2.optimize()
+        print(X_opti.x)
+        new_aff(N,P,X_opti.x,vrai_ind,m2)
 
-            places = calculer()
     
 
     opti_button = tk.Button(root, text='Choix optimal', command=opti_command)
@@ -130,6 +176,9 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
 
     groupe_label = tk.Label(root, text='Groupe ' +str(groupe_compteur)+' comprenant '+str(len(groupes[groupe_compteur]))+ ' personnes')
     groupe_label.pack()
+
+
+
 
 
     def onclick(event):
@@ -162,25 +211,34 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
                 if (i, j) in possibilite:
                     places_prises=[(i,j)]+places_associes[(i,j)]
                     places_rempli=places_rempli+places_prises
-                    for id in range(len(places_prises)):
-                        i2,j2=places_prises[id]
-                        canvas.itemconfig(places[i2][j2], fill='#00FF00')
-                        X_nouveau[i2][j2][groupes[groupe_compteur][id].id]=1
-                    print(places_prises)
+                    secours=0
+                    if 'R' in [individu.categorie for individu in groupes[groupe_compteur]] or 'B' in [individu.categorie for individu in groupes[groupe_compteur]]:
+                        for individu in groupes[groupe_compteur]:
+                            for i in range(N):
+                                for j in range(P):
+                                    X_nouveau[i][j][individu.id]=tab[i][j][individu.id]
+                    else:
+
+                        for id in range(len(places_prises)):
+                            i2,j2=places_prises[id]
+                            if i2==11 and secours==0:
+                                secours+=1
+                                nombre_groupe_secours[len(groupes[groupe_compteur])]=nombre_groupe_secours[len(groupes[groupe_compteur])]-1
+                            canvas.itemconfig(places[i2][j2], fill='#00FF00')
+                            X_nouveau[i2][j2][groupes[groupe_compteur][id].id]=1
                     groupe_compteur+=1
                     while groupe_compteur not in groupes and groupe_compteur<50000:
                         groupe_compteur+=1
 
 
                     if groupe_compteur>=40000:
-                        print("probleme")
                         root.destroy()
+                        verif_enfants(np.array(X_nouveau),ind)
                         new_aff(N,P,np.array(X_nouveau),vrai_ind,m)
                     else:
                         groupe_label['text'] ='Groupe ' +str(groupe_compteur)+' comprenant '+str(len(groupes[groupe_compteur]))+ ' personnes'
 
 
-                    print(groupe_compteur)
                     places_proposees = calculer(groupe_compteur)
                     possibilite=[]
                     for sous_groupe in places_proposees:
@@ -244,7 +302,7 @@ if __name__ == '__main__':
     K=len(ind)
     X=initialise(m,N,P,K)
     m.update()
-    barycentre(m,X,ind_reduit,N,P,K)
+    barycentre_restreint(m,X,ind_reduit,N,P,K)
     unicite_personne(m,X,N,P,K)
     unicite_siege(m,X,N,P,K)
     chef_de_groupe(m, X, ind_reduit)
@@ -258,4 +316,9 @@ if __name__ == '__main__':
     m.optimize()
     tab=X.x
 
+
+    post_traitement(m, X, ind_reduit, [False, False, False])
+    m.setObjective(bonus_groupe3(m, X, ind_reduit, [True, True]), GRB.MINIMIZE) # bonus_groupe3 quadratique
+    m.update()
+    m.optimize()
     dyna_ffichage(30, 6, K, X.x, ind,m)
