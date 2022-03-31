@@ -9,7 +9,7 @@ from tk_ffichage import new_aff
 from comparaison import *
 
 # Dimensions de l'avion
-N = 30
+N = 29
 P = 6
 # Instance
 scenario = 5
