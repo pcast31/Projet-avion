@@ -37,7 +37,7 @@ def post_traitement(m, X, ind, lst = [False, False, True]):
                 for i in range(N):
                     m.addConstr(sum([X[i,j,k] for j in range(P)]) == sum(X[i,j,k].x for j in range(P)))
         elif len(lien[k]) == 1:
-            if sum([i*X[i,j,k].x for i in range(N) for j in range(P)]) != sum([i*X[i,j,lien[k][0]].x for i in range(N) for j in range(P)]):
+            if lst[1] or sum([i*X[i,j,k].x for i in range(N) for j in range(P)]) != sum([i*X[i,j,lien[k][0]].x for i in range(N) for j in range(P)]):
                 for i in range(N):
                     for j in range(P):
                        m.addConstr(X[i,j,k] == X[i,j,k].x)
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     nb = nb_groupes(ind_reduit)
     print(nb)
 
-    a, b = False, True # si a, on gère les groupes de 2 dans le modèle linéaire, sinon dans le postprocessing
+    a, b = False, False # si a, on gère les groupes de 2 dans le modèle linéaire, sinon dans le postprocessing
     # idem pour b et les groupes de 3
 
 
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     m.optimize()
     new_aff(N, P, X.x, ind, m)
 
-
+    print(score(X.x, ind))
 
     post_traitement(m, X, ind_reduit, [False, a, b])
     m.setObjective(bonus_groupe3(m, X, ind_reduit, [1-a, 1-b]), GRB.MINIMIZE) # bonus_groupe3 quadratique
