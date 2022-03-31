@@ -12,7 +12,7 @@ from comparaison import *
 N = 30
 P = 6
 # Instance
-scenario = 3
+scenario = 7
 
 def dimension(ind):
     """
@@ -37,8 +37,8 @@ def dimension(ind):
 m=Model()
 ind=lirexcel2(scenario)
 
-if dimension(ind) > 180:
-    N = 35
+#if dimension(ind) > 180:
+#    N = 35
 
 ind_reduit= reduction(scenario, ind) # Scinde les groupes de 4 et plus en petits groupes
 K=len(ind)
@@ -105,3 +105,8 @@ else:
     print("Problème de barycentre !")
 
 verif_enfants(X.x, ind)
+post_traitement(m, X, ind_reduit, [False, False, True])
+m.setObjective(bonus_groupe3(m, X, ind_reduit, [True, False]), GRB.MINIMIZE) # bonus_groupe3 quadratique
+m.update()
+m.optimize()
+new_aff(N, P, X.x, ind, m)

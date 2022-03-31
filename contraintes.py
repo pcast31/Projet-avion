@@ -2,6 +2,64 @@ import numpy as np
 from gurobipy import *
 
 
+
+def barycentre_restreint(m, X, ind, N, P, K):
+    """
+    Calcule le barycentre et le contraint à rester dans une zone donnée.
+    """
+    max_bar_j = 3.5
+    min_bar_j = 2.5
+    if N == 30 :
+        max_bar_i = 16
+        min_bar_i = 14
+    if N == 35:
+        max_bar_i = 19
+        min_bar_i = 17
+
+    bar = [0, 0]
+    mtot = 0
+
+    for k in range(K):
+        i0 = 0
+        j0 = 0
+        for i in range(N):
+            for j in range(P):
+                i0 += i*X[i, j, k]
+                if j <= 2:
+                    j0 += j*X[i, j, k]
+                else:
+                    j0 += (j+1)*X[i, j, k]  # on compte la largeur du couloir
+        bar[0] += ind[k].masse*i0
+        bar[1] += ind[k].masse*j0
+        mtot += ind[k].masse
+
+        #Le code suivant permet de compter le barycentre 
+        #au centre des chaises roulantes/brancards
+        """
+        if ind[k].categorie in ["H", "F", "E"]:
+            bar[0] += ind[k].masse*i0
+            bar[1] += ind[k].masse*j0
+            mtot += ind[k].masse
+        elif ind[k] == "R":
+            bar[0] += ind[k].masse*(i0 + 1/2)
+            bar[1] += ind[k].masse*(j0 + 1/2)
+            mtot += ind[k].masse
+        else:
+            bar[0] += ind[k].masse*(i0 + 3/2)
+            bar[1] += ind[k].masse*(j0 + 1)
+            mtot += ind[k].masse"""
+    bar[0] /= mtot
+    bar[1] /= mtot
+
+    C1 = m.addConstr(bar[0] <= max_bar_i, name="Cbar1")
+    C2 = m.addConstr(bar[1] <= max_bar_j, name="Cbar2")
+    C3 = m.addConstr(bar[0] >= min_bar_i, name="Cbar3")
+    C4 = m.addConstr(bar[1] >= min_bar_j, name="Cbar4")
+
+    return C1, C2, C3, C4
+
+
+
 def barycentre(m, X, ind, N, P, K):
     """
     Calcule le barycentre et le contraint à rester dans une zone donnée.
