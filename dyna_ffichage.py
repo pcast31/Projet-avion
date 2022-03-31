@@ -9,11 +9,11 @@ from lirexcel import lirexcel, lirexcel2, reduction
 from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
 from postprocessing import post_traitement,dimension
-
+from comparaison import verif_enfants
 
 N = 30
 P = 6
-scenario = 7
+scenario = 2
 
 
 
@@ -105,27 +105,28 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
 
     def aleatoire_command():
         nonlocal groupe_compteur
-        nonlocal places_proposees
-        #nonlocal places_selectionnees
-
-        places_selectionnees = []
-
-        if groupe_compteur == len(tailles_groupes):
-            aleatoire_button['state'] = 'disabled'
-            opti_button['state'] = 'disabled'
-
-        else:
-            groupe_compteur += 1
-            groupe_label['text'] = f'Groupe {groupe_compteur}'
-
-            places_proposees = calculer(tailles_groupes[groupe_compteur - 1])
-
-            for i in range(N):
-                for j in range(P):
-                    if (i, j) in [i for i in places for places in places_proposees]:
-                        canvas.itemconfig(places[i][j], fill='#FF0000')
-                    else:
-                        canvas.itemconfig(places[i][j], fill='#465582')
+        nonlocal X_nouveau
+        root.destroy()
+        m2=Model()
+        X_opti=initialise(m2,N,P,K)
+        m2.update()
+        barycentre(m2,X_opti,ind,N,P,K)
+        unicite_personne(m2,X_opti,N,P,K)
+        unicite_siege(m2,X_opti,N,P,K)
+        chef_de_groupe(m2, X_opti, ind)
+        #symetrie(m,X,ind,N,P,K)
+        for i in range(N):
+            for j in range(P):
+                for k in range(K):
+                    m2.addConstr(X_opti[i,j,k]>=X_nouveau[i][j][k])
+        chaises_roulantes(m2, X_opti, ind)
+        civieres(m2, X_opti, ind)
+        nenfants(m2,X_opti,ind)
+        taille=lutte_des_classes(m2,X_opti,ind)
+        m2.setObjective(1,GRB.MINIMIZE)
+        m2.update()
+        m2.optimize()
+        new_aff(N,P,X_opti.x,vrai_ind,m2)
 
 
     aleatoire_button = tk.Button(root, text='Choix aléatoire', command=aleatoire_command)
@@ -133,17 +134,37 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
 
     
     def opti_command():
+        root.destroy()
         nonlocal groupe_compteur
+        nonlocal X_nouveau
+        m2=Model()
+        X_opti=initialise(m2,N,P,K)
+        m2.update()
+        barycentre(m2,X_opti,ind,N,P,K)
+        unicite_personne(m2,X_opti,N,P,K)
+        unicite_siege(m2,X_opti,N,P,K)
+        chef_de_groupe(m2, X_opti, ind)
+        #symetrie(m,X,ind,N,P,K)
+        for i in range(N):
+            for j in range(P):
+                for k in range(K):
+                    m2.addConstr(X_opti[i,j,k]>=X_nouveau[i][j][k])
+        chaises_roulantes(m2, X_opti, ind)
+        civieres(m2, X_opti, ind)
+        nenfants(m2,X_opti,ind)
+        taille=lutte_des_classes(m2,X_opti,ind)
+        fct_objectif(m2, X_opti, ind, [0,2,2])
+        m2.update()
+        m2.optimize()
 
-        if groupe_compteur == len(tailles_groupes):
-            aleatoire_button['state'] = 'disabled'
-            opti_button['state'] = 'disabled'
 
-        else:
-            groupe_compteur += 1
-            groupe_label['text'] = f'Groupe {groupe_compteur}'
+        post_traitement(m2, X_opti, ind, [False, False, False])
+        m2.setObjective(bonus_groupe3(m2, X_opti, ind, [True, True]), GRB.MINIMIZE) # bonus_groupe3 quadratique
+        m2.update()
+        m2.optimize()
+        print(X_opti.x)
+        new_aff(N,P,X_opti.x,vrai_ind,m2)
 
-            places = calculer()
     
 
     opti_button = tk.Button(root, text='Choix optimal', command=opti_command)
@@ -212,6 +233,7 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,m):
 
                     if groupe_compteur>=40000:
                         root.destroy()
+                        verif_enfants(np.array(X_nouveau),ind)
                         new_aff(N,P,np.array(X_nouveau),vrai_ind,m)
                     else:
                         groupe_label['text'] ='Groupe ' +str(groupe_compteur)+' comprenant '+str(len(groupes[groupe_compteur]))+ ' personnes'
