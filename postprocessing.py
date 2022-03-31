@@ -7,6 +7,7 @@ from lirexcel import lirexcel, lirexcel2, reduction
 from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
 from comparaison import *
+import time
 
 # Dimensions de l'avion
 N = 30
@@ -69,9 +70,7 @@ def dimension(ind):
 # On ré-optimise ensuite en fixant les groupes déjà bien placés.
 
 
-if __name__ == '__main__':
-    m=Model()
-    ind=lirexcel2(scenario)
+def initialisation(m, ind, N, P, a, b):
 
     if dimension(ind) > 180:
         N = 35
@@ -81,7 +80,7 @@ if __name__ == '__main__':
     nb = nb_groupes(ind_reduit)
     print(nb)
 
-    a, b = False, False # si a, on gère les groupes de 2 dans le modèle linéaire, sinon dans le postprocessing
+    #a, b = False, False # si a, on gère les groupes de 2 dans le modèle linéaire, sinon dans le postprocessing
     # idem pour b et les groupes de 3
 
 
@@ -98,24 +97,75 @@ if __name__ == '__main__':
     civieres(m, X, ind_reduit)
     nenfants(m,X,ind_reduit)
     taille=lutte_des_classes(m,X,ind_reduit)
-    fct_objectif(m, X, ind_reduit, [0,2*a,2*b])
+    
     m.update()
+
+    fct_objectif(m, X, ind_reduit, [0,2*a,2*b])
+    m.setParam('Timelimit', t_max)
+    m.update()
+    
+    start_time = time.time()
+
     m.optimize()
-    new_aff(N, P, X.x, ind, m)
+
+    if time.time() - start_time > t_max:
+        return None
+
+    # new_aff(N, P, X.x, ind, m)
 
     print(score(X.x, ind))
 
     post_traitement(m, X, ind_reduit, [False, a, b])
     m.setObjective(bonus_groupe3(m, X, ind_reduit, [1-a, 1-b]), GRB.MINIMIZE) # bonus_groupe3 quadratique
     m.update()
-    m.optimize()
-    new_aff(N, P, X.x, ind, m)
+    
+    start_time = time.time()
 
-    if barycentre2(X.x, ind):
+    m.optimize()
+
+    t = time.time() - start_time
+
+    if t > t_max:
+        return None
+
+    # new_aff(N, P, X.x, ind, m)
+
+    
+
+    if t <= t_max:
+        return (score(X.x, ind)[0], X.x)
+
+if __name__ == '__main__':
+    ind=lirexcel2(scenario)
+    t_max = 40
+    dic_score = [[0,0],[0,0]]
+    placement = [[0,0],[0,0]]
+    for a in range(2):
+        for b in range(2):
+            m = Model()
+            
+            resultat = initialisation(m, ind, N, P, a, b)
+            if resultat != None:
+                dic_score[a][b], placement[a][b] = resultat
+    print(dic_score)
+    if sum([dic_score[a][b] for a in range(2) for b in range(2)]) == 0:
+        print("Rien ne termine !")
+        quit()
+    best = 0
+    a_best, b_best = -1,-1
+    for a in range(2):
+        for b in range(2):
+            if dic_score[a][b] > best:
+                a_best, b_best = a, b
+                best = dic_score[a][b]
+        
+    X = placement[a_best][b_best]
+    new_aff(N, P, X, ind, m)
+
+    if barycentre2(X, ind):
         print("Barycentre bien placé.")
     else:
         print("Problème de barycentre !")
 
-    verif_enfants(X.x, ind)
-
-    print(score(X.x, ind))
+    verif_enfants(X, ind)
+    print(f"Le placement des groupes est bon à {best}. On l'obtient pour {a_best, b_best}")
