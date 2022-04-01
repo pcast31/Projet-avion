@@ -169,17 +169,17 @@ def meilleure_sol_statique(scenario, t_max = 100, lst_a = [0,1], lst_b = [0,1]):
     
     return X, ind, ind_reduit, best, a_best, b_best
 
-#scenario = 4
-#t_max = 90
+scenario = 5
+t_max = 90
 
-#X, ind, ind_reduit, best, a_best, b_best = meilleure_sol_statique(scenario, t_max, [0, 1], [0, 1])
-#(N,P,_) = X.shape
-#new_aff(N, P, X, ind)
+X, ind, ind_reduit, best, a_best, b_best = meilleure_sol_statique(scenario, t_max, [0], [0])
+(N,P,_) = X.shape
+new_aff(N, P, X, ind)
 
-# if barycentre2(X, ind):
-#     print("Barycentre bien placé.")
-# else:
-#     print("Problème de barycentre !")
+if barycentre2(X, ind):
+    print("Barycentre bien placé.")
+else:
+    print("Problème de barycentre !")
 
-# verif_enfants(X, ind)
-# print(f"Le placement des groupes est bon à {best}. On l'obtient pour {a_best, b_best}")
+verif_enfants(X, ind)
+print(f"Le placement des groupes est bon à {best}. On l'obtient pour {a_best, b_best}")
