@@ -1,9 +1,13 @@
 # Projet-avion
 Projet d'optimisation de placement de passagers dans un avion par Paul Castéras, Tom De Coninck, Pierre Eberschweiler, Thibaut Pellerin et Alexis Robardet.
 
-CentraleSupélec, en partenariat avec Air France KLM - 2022 - ST7 Optimisation de systèmes de transport passagers
+*CentraleSupélec, en partenariat avec Air France KLM - 2022 - ST7 Optimisation de systèmes de transport passagers*
 
 Pour lancer l'exécution du programme, il faut exécuter main.py en suivant les instructions qui y sont présentes. On peut notamment modifier le numéro du scénario considéré et le temps maximal d'exécution pour Gurobi.
+
+Par défaut, le scénario exécuté est le cinquième. Les arguments [0], [0] placés en paramètre de la fonction de résolution *meilleure_sol_statique* sont utilisés ici à des fins de démonstration : nous les avons déterminé expérimentalement, et les préciser directement permet de gagner du temps. Mais il est tout à fait possible de rendre la fonction générique en les supprimant. En particulier, en cas de modification du scénario, ils doivent être retirés.
+
+**Donc dans le cadre général, il faut retirer [0], [0] des arguments de la fonction** (le temps d'exécution sera plus long, vu que 4 propositions sont énumérées ; voir le rapport pour plus de détail). 
 
 - affichage.py : affichage des résultats dans la console
 - comparaison.py : comparer la qualité de différentes solutions
