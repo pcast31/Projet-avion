@@ -14,6 +14,9 @@ from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
 import time
 from postprocessing import *
+from dyna_ffichage import dyna_ffichage
+
+scenario = 5
 
 def main():
     # Dimensions de l'avion
@@ -57,8 +60,8 @@ def main2():
     global X
     global ind
 
-    scenario = 0
-    X_post,ind,ind_reduit,best_score,_,_=meilleure_sol_statique(scenario,60)
+    
+    X_post,ind,ind_reduit,best_score,_,_=meilleure_sol_statique(scenario,60, [0], [0])
     (N,P,K)=X_post.shape
     X = X_post
 
@@ -165,4 +168,6 @@ def task():
 root.after(1, task)
 root.mainloop()
 
-new_aff(N, P, X, ind)
+#new_aff(N, P, X, ind)
+
+nombre_choix=dyna_ffichage(N,P,K,X,ind,scenario)

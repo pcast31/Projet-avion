@@ -123,4 +123,4 @@ def verif_enfants(X, ind, b = False):
         print("Pas d'enfants sur les issues de secours.") 
     else:
         print("Il y a des enfants sur les issues de secours !")
-    print(f'Il y a {enfants_seuls} enfants seuls.')
+    print(f'Il y a {-enfants_seuls} enfants seuls.')

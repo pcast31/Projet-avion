@@ -104,10 +104,11 @@ def statique(m, ind, ind_reduit, t_max, a = False, b = True,  P = 6, relax = Fal
     start_time = time.time()
 
     m.optimize()
+    
     # On regarde si Gurobi a bien trouvé une solution optimale
     if time.time() - start_time > t_max:
         return None
-
+    new_aff(N, P, X.x, ind) ##### A enlever
     # On effectue le post-traitement, avec un objectif quadratique qui gère les groupes ignorés précedemment
     post_traitement(m, X, ind_reduit, [False, a, b])
     m.setObjective(bonus_groupe3(m, X, ind_reduit, [1-a, 1-b]), GRB.MINIMIZE) 
@@ -124,6 +125,7 @@ def statique(m, ind, ind_reduit, t_max, a = False, b = True,  P = 6, relax = Fal
 
     # Si Gurobi a terminé, on renvoie le score et le placement correspondant
     if t <= t_max:
+        new_aff(N, P, X.x, ind) ##### A enlever
         return (score(X.x, ind)[0], X.x)
 
 def meilleure_sol_statique(scenario, t_max = 100, lst_a = [0,1], lst_b = [0,1]):
