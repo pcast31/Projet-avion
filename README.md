@@ -1,5 +1,6 @@
 # Projet-avion
 Projet d'optimisation de placement de passagers dans un avion par Paul Castéras, Tom De Coninck, Pierre Eberschweiler, Thibaut Pellerin et Alexis Robardet.
+
 CentraleSupélec, en partenariat avec Air France KLM - 2022 - ST7 Optimisation de systèmes de transport passagers
 
 Pour lancer l'exécution du programme, il faut exécuter main.py en suivant les instructions qui y sont présentes. On peut notamment modifier le numéro du scénario considéré et le temps maximal d'exécution pour Gurobi.
