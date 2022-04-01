@@ -130,8 +130,8 @@ def dyna_ffichage(N, P,K,tab,vrai_ind):
                 if i2==11 and secours==0:
                     secours+=1
                     nombre_groupe_secours[len(groupes[groupe_compteur])]=nombre_groupe_secours[len(groupes[groupe_compteur])]-1
-            canvas.itemconfig(places[i2][j2], fill='#00FF00')
-            X_nouveau[i2][j2][groupes[groupe_compteur][id].id]=1
+                canvas.itemconfig(places[i2][j2], fill='#00FF00')
+                X_nouveau[i2][j2][groupes[groupe_compteur][id].id]=1
         groupe_compteur+=1
         while groupe_compteur not in groupes and groupe_compteur<50000:
             groupe_compteur+=1
