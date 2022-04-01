@@ -15,6 +15,10 @@ N = 29
 P = 6
 
 def dyna_ffichage(N, P,K,tab,vrai_ind,scenario):
+    """
+    Permet de s'occuper de la partie dynamique en générant l'interface graphique
+     et en affectant les groupes aux places qu'ils ont choisit
+    """
     choix_ind={}
     X_nouveau=[[[0 for k in range(K)]for j in range(P)]for i in range(N)]
     groupes={}
@@ -39,12 +43,20 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,scenario):
     nombre_groupe_secours=[sum([1 for gr in issue_de_secours if len(groupes[gr])==card])for card in range(0,4)]
 
     def enfant(groupe):
+        """
+        Renvoie True si des enfants sont dans le groupe 
+        et False sinon
+        """
         for ind in groupe:
             if ind.categorie=='E':
                 return True
         return False
 
     def dernier_groupe_adulte(g,nb):
+        """
+        Renvoie True si il reste moins de nb groupe de même taille que g avec seulement des enfants
+         et False sinon
+        """
         if nb==0:
             return False
         for gr in groupes:
@@ -57,6 +69,9 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,scenario):
 
 
     def calculer(g):
+        """
+        Détermine les places qui peuvent être choisi par le groupe g
+        """
         places = []
         places_enfants = []
         if 'R' in [individu.categorie for individu in groupes[g]] or 'B' in [individu.categorie for individu in groupes[g]]:
@@ -104,6 +119,9 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,scenario):
 
 
     def aleatoire_command():
+        """
+        Affecte aléatoirement un groupe à une place qu'il peut choisir
+        """
         nonlocal possibilite
         nonlocal places_proposees
         nonlocal X_nouveau
@@ -168,6 +186,9 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,scenario):
 
     
     def opti_command():
+        """
+        Trouve une solution optimale après que certains groupes aient choisi leurs places 
+        """
         root.destroy()
         nonlocal groupe_compteur
         nonlocal X_nouveau
@@ -215,6 +236,10 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,scenario):
 
 
     def onclick(event):
+            """
+            Affecte à un groupe les places sur lesquelles ils ont cliqué
+            si ces places sont bien proposé à ce groupe
+            """
             nonlocal possibilite
             nonlocal places_proposees
             nonlocal X_nouveau
@@ -316,7 +341,10 @@ def dyna_ffichage(N, P,K,tab,vrai_ind,scenario):
 
 
     def entree(event):
- 
+            """
+            Colore en bleu les places qui seront sélectionnées 
+            si l'utilisateur clique sur cette place
+            """
             i = -1
             j = -1
 
