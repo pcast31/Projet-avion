@@ -3,7 +3,7 @@ from dyna_ffichage import dyna_ffichage
 import matplotlib.pyplot as plt
 
 # Instance
-scenario = 7
+scenario = 5
 
 
 

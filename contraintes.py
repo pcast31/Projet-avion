@@ -274,7 +274,7 @@ def nenfants(model, X, ind, b = False):
             model.addConstr(sum([ind[k].age*X[i,j,k] for j in range(3,P) for k in range(K)]) >= 0)
             model.addConstr(sum([ind[k].age*X[i,j,k] for j in range(3) for k in range(K)]) >= 0)
     elif pop[1] <= 9*pop[0]:
-        for i in range(0, N, 3):
+        for i in range(0, N-2, 3):
             model.addConstr(sum([ind[k].age**3 * X[x,j,k] for j in range(3) for x in [i,i+1,i+2] for k in range(K)]) >= 0)
             model.addConstr(sum([ind[k].age**3 * X[x,j,k] for j in range(3,P) for x in [i,i+1,i+2] for k in range(K)]) >= 0)
     else:
