@@ -25,9 +25,3 @@ if __name__ == '__main__':
 
     # Version dynamique
     nombre_choix=dyna_ffichage(N,P,K,X_post,ind,scenario)
-
-    # Permet d'afficher les nombres de choix. Attention, ne fonctionne que pour les premières instances
-    #x = [k for k in range(K)]
-    #y = [nombre_choix[k] for k in range(K)]
-    # plt.plot(x,y)
-    # plt.show()
