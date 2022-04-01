@@ -12,13 +12,15 @@ from objectif import *
 from lirexcel import lirexcel, lirexcel2, reduction
 from affichage import affiche_texte, affiche_avion
 from tk_ffichage import new_aff
+import time
+from postprocessing import *
 
 def main():
     # Dimensions de l'avion
     N = 30
     P = 6
     # Instance
-    scenario = 5
+    scenario = 7
 
     m=Model()
     ind=lirexcel2(scenario)
@@ -48,19 +50,36 @@ def main():
 
     return N, P, X, ind, m
 
+def main2():
+    global N
+    global P
+    global K
+    global X
+    global ind
+
+    scenario = 0
+    X_post,ind,ind_reduit,best_score,_,_=meilleure_sol_statique(scenario,60)
+    (N,P,K)=X_post.shape
+    X = X_post
+
 N = None
 P = None
+K = None
 X = None
 ind = None
 m = None
 t = None
 f = None
+b = False
+start = None
 
 root = tk.Tk()
-root.title('Navion')
+root.title('Groubi dodo')
 root.iconbitmap('data/navion.ico')
 
+
 lab = tk.Label(root, text='༼ つ -_- ༽つ')
+lab.config(font=('Helvetica bold', 20))
 lab.pack()
 
 bar = ttk.Progressbar(root, length=300)
@@ -73,6 +92,7 @@ def lezgongue_command():
 
     bar['value'] = 100
     lab['text'] = '༼ つ ◕_◕ ༽つ'
+    root.title('Groubi se réveille')
 
     base_stdout = sys.stdout
 
@@ -87,6 +107,7 @@ def lezgongue_command():
                 lf = abs(float(m.group(0)))
                 bar['value'] = lf
                 lab['text'] = '༼ つ >_< ༽つ'
+                root.title(f'Groubi travaille : {lf}%')
 
                 
                 m = re.search(r'-?\d*\.?\d+(?=\s+-?\d*\.?\d+\s+-?\d*\.?\d+%)', s)
@@ -108,30 +129,40 @@ def lezgongue_command():
         output = GroubiIO()
         sys.stdout = output
 
-        (N, P, X, ind, m) = main()
+        main2()
 
         sys.stdout = base_stdout
 
     t = threading.Thread(target=tf)
     t.start()
 
-lezgongue = tk.Button(root, text='Lezgongue', command=lezgongue_command)
+lezgongue = tk.Button(root, text='Lancer Groubi', command=lezgongue_command)
+lezgongue.config(font=('Helvetica bold', 20))
 lezgongue.pack()
 
 score = tk.Label(root, text='Score : 0')
+score.config(font=('Helvetica bold', 20))
 score.pack()
 
 def task():
     global f
     global t
+    global b
+    global start
 
-    if f == 0:
+    if not b and f == 0:
         t.join()
+        b = True
+        start = time.time()
+        lab['text'] = '༼ つ ◕◡◕ ༽つ'
+        root.title('Groubi content')
+
+    if b and (time.time() - start) > 1:
         root.destroy()
-    else:
-        root.after(1, task)
+    
+    root.after(1, task)
 
 root.after(1, task)
 root.mainloop()
 
-new_aff(N, P, X.x, ind, m)
+new_aff(N, P, X, ind)
